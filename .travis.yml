@@ -1,0 +1,33 @@
+# Use container based builds
+sudo: false
+
+# Lang type
+language: android
+
+android:
+  components:
+    # latest version of the tools
+    - tools
+    - platform-tools
+
+    # build tools version
+    - build-tools-26.0.2
+
+    # The SDK Version
+    - android-26
+
+    # Additional components
+    - extra-google-m2repository
+    - extra-android-m2repository
+
+jdk: oraclejdk8
+
+##  - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
+##  - echo no | android -v create avd --force -n test -b $ANDROID_ABI -k 'system-images;android-15;default;armeabi-v7a'
+
+script: ./gradlew build test
+
+##  - emulator -avd test -no-skin -no-audio -no-window &
+##  - android-wait-for-emulator
+##  - adb shell input keyevent 82 &
+##  - ./gradlew connectedCheck -PdisablePreDex --stacktrace

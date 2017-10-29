@@ -1,0 +1,21 @@
+
+/**
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @author  Gregory Kornienko <gregbiv@gmail.com>
+ * @license MIT
+ */
+package com.github.gregbiv.news.core.repository;
+
+//~--- non-JDK imports --------------------------------------------------------
+
+import rx.Observable;
+
+//~--- JDK imports ------------------------------------------------------------
+
+import java.util.Map;
+
+public interface CategoryRepository {
+    Observable<Map<Integer, Category>> categories();
+}

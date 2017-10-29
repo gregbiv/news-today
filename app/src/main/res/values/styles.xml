@@ -1,0 +1,78 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Common -->
+    <style name="CollectionView">
+        <item name="android:padding">@dimen/item_spacing_half</item>
+        <item name="android:clipToPadding">false</item>
+        <item name="android:scrollbars">none</item>
+    </style>
+
+    <!-- Browse news -->
+
+    <style name="Widget.News.HeaderBar.Spinner.Base" parent="Widget.AppCompat.Light.Spinner.DropDown.ActionBar">
+        <item name="android:background">?android:selectableItemBackground</item>
+        <item name="android:dropDownSelector">?android:selectableItemBackground</item>
+        <item name="android:divider">@null</item>
+        <item name="android:dividerHeight">0dp</item>
+        <item name="android:overlapAnchor" tools:ignore="NewApi">true</item>
+    </style>
+
+    <style name="Widget.News.HeaderBar.Spinner" parent="Widget.News.HeaderBar.Spinner.Base" />
+
+    <style name="NewsItem" parent="CardView">
+        <item name="android:clickable">true</item>
+        <item name="android:foreground">?android:attr/selectableItemBackground</item>
+        <!--<item name="cardPreventCornerOverlap">false</item>-->
+        <item name="cardElevation">4dp</item>
+    </style>
+
+    <style name="NewsItemFooter">
+        <item name="android:background">@color/theme_primary</item>
+    </style>
+
+    <style name="NewsItemTitle">
+        <item name="android:ellipsize">end</item>
+        <!--<item name="android:singleLine">true</item>-->
+        <item name="android:lineSpacingMultiplier">1.1</item>
+        <item name="android:maxLines">2</item>
+    </style>
+
+
+    <style name="NewsItemText">
+        <item name="android:ellipsize">end</item>
+        <!--<item name="android:singleLine">true</item>-->
+        <item name="android:lineSpacingMultiplier">1.1</item>
+        <item name="android:maxLines">3</item>
+    </style>
+
+    <ArticleNews details -->
+    <style name="NewsDetailAnchor">
+        <item name="android:layout_alignTop">@id/news_illustration_container</item>
+        <item name="android:layout_alignBottom">@id/news_illustration_container</item>
+    </style>
+    
+    <!-- Toolbar -->
+
+    <style name="Toolbar">
+        <item name="android:background">?colorPrimary</item>
+    </style>
+
+    <style name="ActionBar.ThemeOverlay" parent="">
+        <item name="android:textColorPrimary">#fff</item>
+        <item name="colorControlNormal">#fff</item>
+        <item name="colorControlHighlight">#3fff</item>
+    </style>
+
+    <style name="ActionBar.PopupThemeOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="ActionBar.TitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/body_text_white</item>
+        <item name="android:textSize">@dimen/text_size_large</item>
+    </style>
+
+    <style name="ActionBar.Subtitle" parent="TextAppearance.AppCompat.Widget.ActionBar.Subtitle">
+        <item name="android:textColor">@color/body_text_white</item>
+        <item name="android:textSize">@dimen/text_size_medium</item>
+    </style>
+
+</resources>

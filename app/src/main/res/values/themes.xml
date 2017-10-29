@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="Theme.News.Base" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/theme_primary</item>
+        <item name="colorPrimaryDark">@color/theme_primary_dark</item>
+        <item name="colorAccent">@color/theme_accent_1</item>
+
+        <item name="android:windowBackground">@color/gray_background</item>
+        <item name="photoItemForeground">?android:selectableItemBackground</item>
+    </style>
+
+    <style name="Theme.News" parent="Theme.News.Base" />
+
+    <style name="Theme.News.BrowseNews"/>
+
+    <style name="Theme.News.NewsDetails" />
+
+</resources>

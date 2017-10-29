@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <ArticleNews details -->
+    <style name="NewsDetailAnchor">
+        <item name="android:layout_alignTop">@id/news_illustration_container</item>
+    </style>
+
+</resources>

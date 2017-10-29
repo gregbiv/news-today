@@ -1,0 +1,49 @@
+<resources>
+    <!-- Keylines -->
+    <dimen name="keyline_1">16dp</dimen>
+    <dimen name="keyline_1_minus_8dp">8dp</dimen>
+    <dimen name="keyline_2">72dp</dimen>
+    <dimen name="keyline_2_minus_16dp">56dp</dimen>
+
+    <!-- Texts -->
+    <dimen name="text_size_xsmall">11sp</dimen>
+    <dimen name="text_size_small">12sp</dimen>
+    <dimen name="text_size_medium">14sp</dimen>
+    <dimen name="text_size_large">18sp</dimen>
+    <dimen name="text_size_xlarge">20sp</dimen>
+    <dimen name="text_size_xxlarge">24sp</dimen>
+    <dimen name="text_size_diff_large_small">6sp</dimen>
+
+    <!-- Toolbar -->
+    <dimen name="toolbar_elevation">8dp</dimen>
+
+    <!-- BroArticleNews -->
+    <item name="news_item_image_aspect_ratio" format="float" type="dimen">.675</item>
+    <dimen name="spinner_left_padding">0dp</dimen>
+    <dimen name="spinner_drawable_padding">16dp</dimen>
+    <dimen name="explore_spinner_width">200dp</dimen>
+    <dimen name="explore_dropdown_item_height">48dp</dimen>
+
+    <!-- Common -->
+    <dimen name="item_spacing_half">2dp</dimen>
+    <dimen name="item_spacing_full">4dp</dimen>
+    <dimen name="element_spacing_normal">8dp</dimen>
+    <dimen name="content_padding_normal">16dp</dimen>
+    <dimen name="card_corner_radius">2dp</dimen>
+    <dimen name="item_load_more_size">48dp</dimen>
+    <dimen name="flexible_space_image_height">300dp</dimen>
+    <item name="match_parent" type="dimen">-1</item>
+    <item name="wrap_content" type="dimen">-2</item>
+
+    <!-- Sticky headers -->
+    <dimen name="default_divider_height">1dp</dimen>
+    <dimen name="default_divider_padding">4dp</dimen>
+
+    <ArticleNews Details -->
+    <item name="news_details_illustration_aspect_ratio" format="float" type="dimen">1.77</item>
+    <dimen name="news_details_responsive_width">@dimen/match_parent</dimen>
+    <dimen name="news_details_anchor_height">@dimen/match_parent</dimen>
+    <dimen name="news_details_margin">0dp</dimen>
+    <dimen name="news_details_content_margin_bottom">0dp</dimen>
+
+</resources>
