@@ -8,7 +8,7 @@
  */
 package com.github.gregbiv.news.ui.widget;
 
-//~--- non-JDK imports --------------------------------------------------------
+import com.github.gregbiv.news.R;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -26,8 +26,6 @@ import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
-import com.github.gregbiv.news.R;
 
 /**
  * @attr ref android.R.styleable#AnimatorStateView_messageText
@@ -68,11 +66,11 @@ public final class AnimatorStateView extends LinearLayout {
         a.recycle();
     }
 
-    public void setMessageText(CharSequence text) {
-        mTextView.setText(text);
-    }
-
     public void setMessageImage(Drawable drawable) {
         mImageView.setImageDrawable(drawable);
+    }
+
+    public void setMessageText(CharSequence text) {
+        mTextView.setText(text);
     }
 }

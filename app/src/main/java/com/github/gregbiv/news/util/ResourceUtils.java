@@ -8,8 +8,6 @@
  */
 package com.github.gregbiv.news.util;
 
-//~--- non-JDK imports --------------------------------------------------------
-
 import android.content.res.Resources;
 
 import android.support.annotation.DimenRes;

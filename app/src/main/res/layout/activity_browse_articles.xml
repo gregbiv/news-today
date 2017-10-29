@@ -7,7 +7,7 @@
     <include layout="@layout/toolbar" />
 
     <FrameLayout
-        android:id="@+id/news_container"
+        android:id="@+id/article_container"
         android:layout_marginRight="@dimen/item_spacing_half"
         android:layout_marginLeft="@dimen/item_spacing_half"
         android:layout_width="match_parent"

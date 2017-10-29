@@ -8,7 +8,12 @@
  */
 package com.github.gregbiv.news.ui.fragment;
 
-//~--- non-JDK imports --------------------------------------------------------
+import java.util.Collections;
+import java.util.List;
+
+import com.github.gregbiv.news.BootstrapApplication;
+
+import com.squareup.leakcanary.RefWatcher;
 
 import android.os.Bundle;
 
@@ -23,15 +28,6 @@ import android.widget.Toast;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-import com.squareup.leakcanary.RefWatcher;
-
-import com.github.gregbiv.news.BootstrapApplication;
-
-//~--- JDK imports ------------------------------------------------------------
-
-import java.util.Collections;
-import java.util.List;
-
 /**
  * Base class for all fragments.
  * Binds views, watches memory leaks and performs dependency injections
@@ -40,14 +36,14 @@ import java.util.List;
  * @see RefWatcher
  */
 public abstract class BaseFragment extends Fragment {
-    private Toast mToast;
+    private Toast    mToast;
     private Unbinder unbinder;
 
     @CallSuper
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        unbinder = ButterKnife.bind(this, view);
+    public void onDestroy() {
+        super.onDestroy();
+        BootstrapApplication.get(getActivity()).getRefWatcher().watch(this);
     }
 
     @CallSuper
@@ -59,18 +55,9 @@ public abstract class BaseFragment extends Fragment {
 
     @CallSuper
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        BootstrapApplication.get(getActivity()).getRefWatcher().watch(this);
-    }
-
-    protected void showToast(String message) {
-        if (mToast != null) {
-            mToast.cancel();
-        }
-
-        mToast = Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT);
-        mToast.show();
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        unbinder = ButterKnife.bind(this, view);
     }
 
     protected void showToast(@StringRes int resId) {
@@ -79,6 +66,15 @@ public abstract class BaseFragment extends Fragment {
         }
 
         mToast = Toast.makeText(getActivity(), resId, Toast.LENGTH_SHORT);
+        mToast.show();
+    }
+
+    protected void showToast(String message) {
+        if (mToast != null) {
+            mToast.cancel();
+        }
+
+        mToast = Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT);
         mToast.show();
     }
 

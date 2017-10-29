@@ -3,7 +3,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @author  Gregory Kornienko <gregbiv@gmail.com>
+ * @author Gregory Kornienko <gregbiv@gmail.com>
  * @license MIT
  */
 package com.github.gregbiv.news.core.model;
@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -26,25 +27,40 @@ public class Article implements Parcelable {
         }
     };
     @Expose
-    private String author;
+    private Integer  id;
     @Expose
-    private String title;
+    private String   author;
     @Expose
-    private String description;
+    private String   title;
     @Expose
-    private String url;
+    private String   description;
     @Expose
-    private String urlToImage;
+    private String   url;
     @Expose
-    private String publishedAt;
+    private String   urlToImage;
+    @Expose
+    private String   publishedAt;
+    @Expose
+    @SerializedName("category")
+    private int      categoryId;
+    private Category category;
+    @Expose
+    @SerializedName("feed")
+    private int      sourceId;
+    private Source   source;
 
     protected Article(Parcel in) {
+        this.id          = in.readInt();
         this.author      = in.readString();
         this.title       = in.readString();
         this.description = in.readString();
         this.url         = in.readString();
         this.urlToImage  = in.readString();
         this.publishedAt = in.readString();
+        this.categoryId  = in.readInt();
+        this.category    = in.readParcelable(Category.class.getClassLoader());
+        this.sourceId    = in.readInt();
+        this.source      = in.readParcelable(Source.class.getClassLoader());
     }
 
     @Override
@@ -60,6 +76,10 @@ public class Article implements Parcelable {
         dest.writeString(this.url);
         dest.writeString(this.urlToImage);
         dest.writeString(this.publishedAt);
+        dest.writeInt(this.categoryId);
+        dest.writeParcelable(this.category, flags);
+        dest.writeInt(this.sourceId);
+        dest.writeParcelable(this.source, flags);
     }
 
     public String getAuthor() {
@@ -69,6 +89,25 @@ public class Article implements Parcelable {
     public Article setAuthor(String author) {
         this.author = author;
 
+        return this;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public Article setCategory(Category category) {
+        this.category = category;
+
+        return this;
+    }
+
+    public int getCategoryId() {
+        return categoryId;
+    }
+
+    public Article setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
         return this;
     }
 
@@ -82,6 +121,16 @@ public class Article implements Parcelable {
         return this;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
+    public Article setId(Integer id) {
+        this.id = id;
+
+        return this;
+    }
+
     public String getPublishedAt() {
         return publishedAt;
     }
@@ -89,6 +138,25 @@ public class Article implements Parcelable {
     public Article setPublishedAt(String publishedAt) {
         this.publishedAt = publishedAt;
 
+        return this;
+    }
+
+    public Source getSource() {
+        return source;
+    }
+
+    public Article setSource(Source source) {
+        this.source = source;
+
+        return this;
+    }
+
+    public int getSourceId() {
+        return sourceId;
+    }
+
+    public Article setSourceId(int sourceId) {
+        this.sourceId = sourceId;
         return this;
     }
 

@@ -8,30 +8,27 @@
  */
 package com.github.gregbiv.news;
 
-//~--- non-JDK imports --------------------------------------------------------
-
-import dagger.Component;
+import javax.inject.Singleton;
 
 import com.github.gregbiv.news.ui.activity.BootstrapActivity;
 import com.github.gregbiv.news.ui.activity.MainActivity;
 import com.github.gregbiv.news.ui.fragment.NewsFragment;
 
-//~--- JDK imports ------------------------------------------------------------
-
-import javax.inject.Singleton;
+import dagger.Component;
 
 @Singleton
 @Component(modules = { AndroidModule.class, BootstrapModule.class })
 public interface BootstrapComponent {
+    void inject(BaseActivity target);
+
     void inject(BootstrapApplication target);
 
     void inject(BrowseNewsActivity target);
 
-    void inject(NewsFragment target);
-
     void inject(BrowseNewsFragment target);
 
-    void inject(BaseActivity target);
+    void inject(NewsFragment target);
 
     void inject(NewsSyncAdapter target);
 }
+

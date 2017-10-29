@@ -8,8 +8,6 @@
  */
 package com.github.gregbiv.news.ui.widget;
 
-//~--- non-JDK imports --------------------------------------------------------
-
 import android.content.Context;
 
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -27,10 +25,6 @@ public class MultiSwipeRefreshLayout extends SwipeRefreshLayout {
         super(context, attrs);
     }
 
-    public void setCanChildScrollUpCallback(CanChildScrollUpCallback canChildScrollUpCallback) {
-        mCanChildScrollUpCallback = canChildScrollUpCallback;
-    }
-
     @Override
     public boolean canChildScrollUp() {
         if (mCanChildScrollUpCallback != null) {
@@ -38,6 +32,10 @@ public class MultiSwipeRefreshLayout extends SwipeRefreshLayout {
         }
 
         return super.canChildScrollUp();
+    }
+
+    public void setCanChildScrollUpCallback(CanChildScrollUpCallback canChildScrollUpCallback) {
+        mCanChildScrollUpCallback = canChildScrollUpCallback;
     }
 
     public interface CanChildScrollUpCallback {

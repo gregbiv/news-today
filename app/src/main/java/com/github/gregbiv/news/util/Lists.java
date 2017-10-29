@@ -8,8 +8,6 @@
  */
 package com.github.gregbiv.news.util;
 
-//~--- JDK imports ------------------------------------------------------------
-
 import java.util.Collection;
 
 public final class Lists {

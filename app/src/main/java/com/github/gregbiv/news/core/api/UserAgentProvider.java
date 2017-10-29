@@ -8,7 +8,14 @@
  */
 package com.github.gregbiv.news.core.api;
 
-//~--- non-JDK imports --------------------------------------------------------
+import java.lang.reflect.Method;
+
+import java.util.ArrayList;
+import java.util.Locale;
+
+import javax.inject.Provider;
+
+import com.github.gregbiv.news.util.StringUtils;
 
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
@@ -17,18 +24,7 @@ import android.os.Build;
 
 import android.telephony.TelephonyManager;
 
-import com.github.gregbiv.news.util.StringUtils;
-
 import timber.log.Timber;
-
-//~--- JDK imports ------------------------------------------------------------
-
-import java.lang.reflect.Method;
-
-import java.util.ArrayList;
-import java.util.Locale;
-
-import javax.inject.Provider;
 
 /**
  * Class that builds a User-Agent that is set on all HTTP calls.
@@ -72,13 +68,17 @@ public class UserAgentProvider implements Provider<String> {
         if (userAgent == null) {
             synchronized (UserAgentProvider.class) {
                 if (userAgent == null) {
-                    userAgent = String.format("%s/%s (Android %s; %s %s / %s %s; %s)", APP_NAME, info.versionName,
-                                              Build.VERSION.RELEASE, StringUtils.capitalize(Build.MANUFACTURER),
+                    userAgent = String.format("%s/%s (Android %s; %s %s / %s %s; %s)",
+                                              APP_NAME,
+                                              info.versionName,
+                                              Build.VERSION.RELEASE,
+                                              StringUtils.capitalize(Build.MANUFACTURER),
                                               StringUtils.capitalize(Build.DEVICE),
-                                              StringUtils.capitalize(Build.BRAND), StringUtils.capitalize(Build.MODEL),
+                                              StringUtils.capitalize(Build.BRAND),
+                                              StringUtils.capitalize(Build.MODEL),
                                               StringUtils.capitalize((telephonyManager == null)
-                            ? "not-found"
-                            : telephonyManager.getSimOperatorName()));
+                                                                     ? "not-found"
+                                                                     : telephonyManager.getSimOperatorName()));
 
                     final ArrayList<String> params = new ArrayList<String>();
 

@@ -1,6 +1,11 @@
 package com.github.gregbiv.news.ui.activity;
 
-//~--- non-JDK imports --------------------------------------------------------
+import javax.inject.Inject;
+
+import com.github.gregbiv.news.BootstrapApplication;
+import com.github.gregbiv.news.R;
+
+import com.squareup.otto.Bus;
 
 import android.os.Bundle;
 
@@ -14,16 +19,7 @@ import android.support.v7.widget.Toolbar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import com.squareup.otto.Bus;
-
-import com.github.gregbiv.news.BootstrapApplication;
-import com.github.gregbiv.news.R;
-
 import timber.log.Timber;
-
-//~--- JDK imports ------------------------------------------------------------
-
-import javax.inject.Inject;
 
 public abstract class BaseActivity extends AppCompatActivity {
     @Inject
@@ -38,10 +34,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         BootstrapApplication.component().inject(this);
     }
 
+    @CallSuper
     @Override
-    protected void onResume() {
-        super.onResume();
-        bus.register(this);
+    protected void onDestroy() {
+        super.onDestroy();
+        BootstrapApplication.get(this).getRefWatcher().watch(this);
     }
 
     @Override
@@ -50,24 +47,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         bus.unregister(this);
     }
 
-    @CallSuper
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        BootstrapApplication.get(this).getRefWatcher().watch(this);
-    }
-
-    @CallSuper
-    @Override
-    public void setContentView(int layoutResID) {
-        super.setContentView(layoutResID);
-        ButterKnife.bind(this);
-        setupToolbar();
-    }
-
-    @Nullable
-    public final Toolbar getToolbar() {
-        return mToolbar;
+    protected void onResume() {
+        super.onResume();
+        bus.register(this);
     }
 
     private void setupToolbar() {
@@ -88,5 +71,18 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         actionBar.setDisplayHomeAsUpEnabled(false);
         actionBar.setHomeButtonEnabled(false);
+    }
+
+    @CallSuper
+    @Override
+    public void setContentView(int layoutResID) {
+        super.setContentView(layoutResID);
+        ButterKnife.bind(this);
+        setupToolbar();
+    }
+
+    @Nullable
+    public final Toolbar getToolbar() {
+        return mToolbar;
     }
 }

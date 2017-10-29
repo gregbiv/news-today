@@ -8,20 +8,15 @@
  */
 package com.github.gregbiv.news;
 
-//~--- non-JDK imports --------------------------------------------------------
-
 import com.crashlytics.android.Crashlytics;
 
-import io.fabric.sdk.android.Fabric;
-
 import com.github.gregbiv.news.logging.CrashlyticsTree;
+
+import io.fabric.sdk.android.Fabric;
 
 import timber.log.Timber;
 
 public class BootstrapApplicationImpl extends BootstrapApplication {
-    @Override
-    protected void onAfterInjection() {}
-
     @Override
     protected void init() {
 
@@ -31,4 +26,8 @@ public class BootstrapApplicationImpl extends BootstrapApplication {
         // Set the type of logger, crashlytics in release mode
         Timber.plant(new CrashlyticsTree());
     }
+
+    @Override
+    protected void onAfterInjection() {}
 }
+

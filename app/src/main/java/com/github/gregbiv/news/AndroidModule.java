@@ -8,7 +8,7 @@
  */
 package com.github.gregbiv.news;
 
-//~--- non-JDK imports --------------------------------------------------------
+import javax.inject.Singleton;
 
 import android.accounts.AccountManager;
 
@@ -29,15 +29,16 @@ import android.view.inputmethod.InputMethodManager;
 import dagger.Module;
 import dagger.Provides;
 
-//~--- JDK imports ------------------------------------------------------------
-
-import javax.inject.Singleton;
-
 /**
  * Module for all Android related provisions
  */
 @Module
 public class AndroidModule {
+    @Provides
+    AccountManager provideAccountManager(final Context context) {
+        return AccountManager.get(context);
+    }
+
     @Provides
     @Singleton
     Context provideAppContext() {
@@ -45,8 +46,28 @@ public class AndroidModule {
     }
 
     @Provides
+    ApplicationInfo provideApplicationInfo(final Context context) {
+        return context.getApplicationInfo();
+    }
+
+    @Provides
+    ClassLoader provideClassLoader(final Context context) {
+        return context.getClassLoader();
+    }
+
+    @Provides
     SharedPreferences provideDefaultSharedPreferences(final Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context);
+    }
+
+    @Provides
+    InputMethodManager provideInputMethodManager(final Context context) {
+        return (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+    }
+
+    @Provides
+    NotificationManager provideNotificationManager(final Context context) {
+        return (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
     @Provides
@@ -66,30 +87,5 @@ public class AndroidModule {
     @SuppressWarnings("unchecked")
     public <T> T getSystemService(Context context, String serviceConstant) {
         return (T) context.getSystemService(serviceConstant);
-    }
-
-    @Provides
-    InputMethodManager provideInputMethodManager(final Context context) {
-        return (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-    }
-
-    @Provides
-    ApplicationInfo provideApplicationInfo(final Context context) {
-        return context.getApplicationInfo();
-    }
-
-    @Provides
-    AccountManager provideAccountManager(final Context context) {
-        return AccountManager.get(context);
-    }
-
-    @Provides
-    ClassLoader provideClassLoader(final Context context) {
-        return context.getClassLoader();
-    }
-
-    @Provides
-    NotificationManager provideNotificationManager(final Context context) {
-        return (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 }

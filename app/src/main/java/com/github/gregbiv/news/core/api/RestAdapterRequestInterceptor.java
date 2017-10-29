@@ -8,11 +8,9 @@
  */
 package com.github.gregbiv.news.core.api;
 
-//~--- non-JDK imports --------------------------------------------------------
+import static com.github.gregbiv.news.core.Constants.Http.*;
 
 import retrofit.RequestInterceptor;
-
-import static com.github.gregbiv.news.core.Constants.Http.*;
 
 public class RestAdapterRequestInterceptor implements RequestInterceptor {
     private UserAgentProvider userAgentProvider;

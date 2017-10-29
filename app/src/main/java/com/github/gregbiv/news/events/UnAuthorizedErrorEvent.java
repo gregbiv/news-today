@@ -8,8 +8,6 @@
  */
 package com.github.gregbiv.news.events;
 
-//~--- JDK imports ------------------------------------------------------------
-
 import java.io.Serializable;
 
 public class UnAuthorizedErrorEvent {

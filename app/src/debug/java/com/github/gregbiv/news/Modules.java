@@ -18,3 +18,4 @@ final class Modules {
         return new Object[] { new AndroidModule(), new BootstrapModule() };
     }
 }
+

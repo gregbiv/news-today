@@ -8,13 +8,11 @@
  */
 package com.github.gregbiv.news.core.api;
 
-//~--- non-JDK imports --------------------------------------------------------
-
-import com.squareup.otto.Bus;
-
 import com.github.gregbiv.news.events.NetworkErrorEvent;
 import com.github.gregbiv.news.events.RestAdapterErrorEvent;
 import com.github.gregbiv.news.events.UnAuthorizedErrorEvent;
+
+import com.squareup.otto.Bus;
 
 import retrofit.ErrorHandler;
 import retrofit.RetrofitError;

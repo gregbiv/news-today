@@ -8,14 +8,25 @@
  */
 package com.github.gregbiv.news;
 
-//~--- non-JDK imports --------------------------------------------------------
+import java.io.File;
 
-import android.content.ContentResolver;
-import android.content.Context;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
+import javax.inject.Singleton;
 
-import android.telephony.TelephonyManager;
+import static java.util.concurrent.TimeUnit.SECONDS;
+
+import com.github.gregbiv.news.core.Constants;
+import com.github.gregbiv.news.core.PostFromAnyThreadBus;
+import com.github.gregbiv.news.core.api.NewsApi;
+import com.github.gregbiv.news.core.api.RestAdapterRequestInterceptor;
+import com.github.gregbiv.news.core.api.RestErrorHandler;
+import com.github.gregbiv.news.core.api.UserAgentProvider;
+import com.github.gregbiv.news.core.provider.NewsDatabase;
+import com.github.gregbiv.news.core.repository.ArticleRepository;
+import com.github.gregbiv.news.core.repository.ArticleRepositoryImpl;
+import com.github.gregbiv.news.core.repository.CategoryRepository;
+import com.github.gregbiv.news.core.repository.CategoryRepositoryImpl;
+import com.github.gregbiv.news.core.repository.SourceRepository;
+import com.github.gregbiv.news.core.repository.SourceRepositoryImpl;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -27,20 +38,17 @@ import com.squareup.sqlbrite.BriteContentResolver;
 import com.squareup.sqlbrite.BriteDatabase;
 import com.squareup.sqlbrite.SqlBrite;
 
+import static com.github.gregbiv.news.core.Constants.Http.DISK_CACHE_SIZE;
+
+import android.content.ContentResolver;
+import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+
+import android.telephony.TelephonyManager;
+
 import dagger.Module;
 import dagger.Provides;
-
-import com.github.gregbiv.news.core.Constants;
-import com.github.gregbiv.news.core.PostFromAnyThreadBus;
-import com.github.gregbiv.news.core.api.NewsApi;
-import com.github.gregbiv.news.core.api.RestAdapterRequestInterceptor;
-import com.github.gregbiv.news.core.api.RestErrorHandler;
-import com.github.gregbiv.news.core.api.UserAgentProvider;
-import com.github.gregbiv.news.core.provider.NewsDatabase;
-import com.github.gregbiv.news.core.repository.CategoryRepository;
-import com.github.gregbiv.news.core.repository.CategoryRepositoryImpl;
-import com.github.gregbiv.news.core.repository.ArticleRepository;
-import com.github.gregbiv.news.core.repository.ArticleRepositoryImpl;
 
 import retrofit.RestAdapter;
 
@@ -50,86 +58,22 @@ import retrofit.converter.GsonConverter;
 
 import timber.log.Timber;
 
-import static com.github.gregbiv.news.core.Constants.Http.DISK_CACHE_SIZE;
-
-//~--- JDK imports ------------------------------------------------------------
-
-import java.io.File;
-
-import javax.inject.Singleton;
-
-import static java.util.concurrent.TimeUnit.SECONDS;
-
 /**
  * Dagger module for setting up provides statements.
  * Register all of your entry points below.
  */
 @Module
 public class BootstrapModule {
-    @Singleton
-    @Provides
-    Bus provideOttoBus() {
-        return new PostFromAnyThreadBus();
-    }
-
-    @Provides
-    @Singleton
-    SqlBrite provideSqlBrite() {
-        return SqlBrite.create(message -> Timber.tag("Database").v(message));
-    }
-
-    @Provides
-    @Singleton
-    BriteDatabase providerBriteDatabase(SqlBrite sqlBrite, Context context) {
-        return sqlBrite.wrapDatabaseHelper(new NewsDatabase(context));
-    }
-
-    @Provides
-    @Singleton
-    ContentResolver provideContentResolver(Context context) {
-        return context.getContentResolver();
-    }
-
     @Provides
     @Singleton
     BriteContentResolver provideBriteContentResolver(SqlBrite sqlBrite, ContentResolver contentResolver) {
         return sqlBrite.wrapContentProvider(contentResolver);
     }
 
-    @Singleton
     @Provides
-    NewsApi provideNewsApi(RestAdapter restAdapter) {
-        return restAdapter.create(NewsApi.class);
-    }
-
     @Singleton
-    @Provides
-    CategoryRepository providesCategoryRepository(BriteContentResolver briteContentResolver) {
-        return new CategoryRepositoryImpl(briteContentResolver);
-    }
-
-    @Singleton
-    @Provides
-    FeedRepository providesFeedRepository(BriteContentResolver briteContentResolver) {
-        return new FeedRepositoryImpl(briteContentResolver);
-    }
-
-    @Singleton
-    @Provides
-    PersonRepository providesPersonRepository(BriteContentResolver briteContentResolver) {
-        return new PersonRepositoryImpl(briteContentResolver);
-    }
-
-    @Singleton
-    @Provides
-    CityRepository providesCityRepository(BriteContentResolver briteContentResolver) {
-        return new CityRepositoryImpl(briteContentResolver);
-    }
-
-    @Singleton
-    @Provides
-    ArticleRepository providesNewsRepository(NewsApi newsApi, CategoryRepository categoryRepository, FeedRepository feedRepository) {
-        return new ArticleRepositoryImpl(newsApi, categoryRepository, feedRepository);
+    ContentResolver provideContentResolver(Context context) {
+        return context.getContentResolver();
     }
 
     @Provides
@@ -150,20 +94,10 @@ public class BootstrapModule {
         return new GsonBuilder().excludeFieldsWithoutExposeAnnotation().setDateFormat("yyyy-MM-dd").create();
     }
 
+    @Singleton
     @Provides
-    RestErrorHandler provideRestErrorHandler(Bus bus) {
-        return new RestErrorHandler(bus);
-    }
-
-    @Provides
-    UserAgentProvider providesUserAgentProvider(ApplicationInfo appInfo, PackageInfo packageInfo,
-            TelephonyManager telephonyManager, ClassLoader classLoader) {
-        return new UserAgentProvider(appInfo, packageInfo, telephonyManager, classLoader);
-    }
-
-    @Provides
-    RestAdapterRequestInterceptor provideRestAdapterRequestInterceptor(UserAgentProvider userAgentProvider) {
-        return new RestAdapterRequestInterceptor(userAgentProvider);
+    NewsApi provideNewsApi(RestAdapter restAdapter) {
+        return restAdapter.create(NewsApi.class);
     }
 
     @Provides
@@ -184,14 +118,67 @@ public class BootstrapModule {
         return client;
     }
 
+    @Singleton
+    @Provides
+    Bus provideOttoBus() {
+        return new PostFromAnyThreadBus();
+    }
+
     @Provides
     @Singleton
-    RestAdapter provideRestAdapter(OkHttpClient client, Gson gson, RestAdapterRequestInterceptor restRequestInterceptor) {
-        return new RestAdapter.Builder()
-                .setClient(new OkClient(client))
-                .setEndpoint(Constants.Http.URL_BASE)
-                .setLogLevel(RestAdapter.LogLevel.BASIC)
-                .setRequestInterceptor(restRequestInterceptor)
-                .setConverter(new GsonConverter(gson)).build();
+    RestAdapter provideRestAdapter(OkHttpClient client, Gson gson,
+                                   RestAdapterRequestInterceptor restRequestInterceptor) {
+        return new RestAdapter.Builder().setClient(new OkClient(client))
+                                        .setEndpoint(Constants.Http.URL_BASE)
+                                        .setLogLevel(RestAdapter.LogLevel.BASIC)
+                                        .setRequestInterceptor(restRequestInterceptor)
+                                        .setConverter(new GsonConverter(gson))
+                                        .build();
+    }
+
+    @Provides
+    RestAdapterRequestInterceptor provideRestAdapterRequestInterceptor(UserAgentProvider userAgentProvider) {
+        return new RestAdapterRequestInterceptor(userAgentProvider);
+    }
+
+    @Provides
+    RestErrorHandler provideRestErrorHandler(Bus bus) {
+        return new RestErrorHandler(bus);
+    }
+
+    @Provides
+    @Singleton
+    SqlBrite provideSqlBrite() {
+        return SqlBrite.create(message -> Timber.tag("Database").v(message));
+    }
+
+    @Provides
+    @Singleton
+    BriteDatabase providerBriteDatabase(SqlBrite sqlBrite, Context context) {
+        return sqlBrite.wrapDatabaseHelper(new NewsDatabase(context));
+    }
+
+    @Singleton
+    @Provides
+    SourceRepository providesSourceRepository(BriteContentResolver briteContentResolver) {
+        return new SourceRepositoryImpl(briteContentResolver);
+    }
+
+    @Singleton
+    @Provides
+    CategoryRepository providesCategoryRepository(BriteContentResolver briteContentResolver) {
+        return new CategoryRepositoryImpl(briteContentResolver);
+    }
+
+    @Singleton
+    @Provides
+    ArticleRepository providesArticlesRepository(NewsApi newsApi, SourceRepository sourceRepository, CategoryRepository categoryRepository) {
+        return new ArticleRepositoryImpl(newsApi, sourceRepository, categoryRepository);
+    }
+
+    @Provides
+    UserAgentProvider providesUserAgentProvider(ApplicationInfo appInfo, PackageInfo packageInfo,
+                                                TelephonyManager telephonyManager, ClassLoader classLoader) {
+        return new UserAgentProvider(appInfo, packageInfo, telephonyManager, classLoader);
     }
 }

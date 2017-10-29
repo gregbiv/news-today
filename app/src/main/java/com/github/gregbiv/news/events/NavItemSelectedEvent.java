@@ -8,13 +8,11 @@
  */
 package com.github.gregbiv.news.events;
 
-//~--- non-JDK imports --------------------------------------------------------
-
-import com.github.gregbiv.news.ui.activity.BrowseNewsActivity;
+import com.github.gregbiv.news.ui.activity.BrowseArticlesActivity;
 
 /**
  * Pub/Sub event used to communicate between fragment and activity.
- * Subscription occurs in the {@link BrowseNewsActivity}
+ * Subscription occurs in the {@link BrowseArticlesActivity}
  */
 public class NavItemSelectedEvent {
     private int itemPosition;

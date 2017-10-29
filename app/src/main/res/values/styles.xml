@@ -45,10 +45,10 @@
         <item name="android:maxLines">3</item>
     </style>
 
-    <ArticleNews details -->
+    <!-- News details -->
     <style name="NewsDetailAnchor">
-        <item name="android:layout_alignTop">@id/news_illustration_container</item>
-        <item name="android:layout_alignBottom">@id/news_illustration_container</item>
+        <item name="android:layout_alignTop">@id/article_illustration_container</item>
+        <item name="android:layout_alignBottom">@id/article_illustration_container</item>
     </style>
     
     <!-- Toolbar -->

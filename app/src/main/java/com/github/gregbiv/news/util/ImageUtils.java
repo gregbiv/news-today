@@ -8,7 +8,9 @@
  */
 package com.github.gregbiv.news.util;
 
-//~--- non-JDK imports --------------------------------------------------------
+import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -26,12 +28,6 @@ import static android.graphics.Bitmap.Config.ARGB_8888;
 import static android.graphics.Color.WHITE;
 import static android.graphics.PorterDuff.Mode.DST_IN;
 
-//~--- JDK imports ------------------------------------------------------------
-
-import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-
 /**
  * Image utilities
  */
@@ -43,6 +39,48 @@ public final class ImageUtils {
     private ImageUtils() {
 
         // never called
+    }
+
+    /**
+     * Round the corners of a {@link Bitmap}
+     *
+     * @param source
+     * @param radius
+     * @return rounded corner bitmap
+     */
+    public static Bitmap roundCorners(final Bitmap source, final float radius) {
+        final int   width  = source.getWidth();
+        final int   height = source.getHeight();
+        final Paint paint  = new Paint();
+
+        paint.setAntiAlias(true);
+        paint.setColor(WHITE);
+
+        final Bitmap clipped = Bitmap.createBitmap(width, height, ARGB_8888);
+        Canvas       canvas  = new Canvas(clipped);
+
+        canvas.drawRoundRect(new RectF(0, 0, width, height), radius, radius, paint);
+        paint.setXfermode(new PorterDuffXfermode(DST_IN));
+
+        final Bitmap rounded = Bitmap.createBitmap(width, height, ARGB_8888);
+
+        canvas = new Canvas(rounded);
+        canvas.drawBitmap(source, 0, 0, null);
+        canvas.drawBitmap(clipped, 0, 0, paint);
+        source.recycle();
+        clipped.recycle();
+
+        return rounded;
+    }
+
+    /**
+     * Get a bitmap from the image file
+     *
+     * @param image
+     * @return bitmap or null if read fails
+     */
+    public static Bitmap getBitmap(final File image) {
+        return getBitmap(image.getAbsolutePath());
     }
 
     /**
@@ -90,6 +128,67 @@ public final class ImageUtils {
     }
 
     /**
+     * Get bitmap with maximum height or width
+     *
+     * @param image
+     * @param width
+     * @param height
+     * @return image
+     */
+    public static Bitmap getBitmap(final File image, final int width, final int height) {
+        return getBitmap(image.getAbsolutePath(), width, height);
+    }
+
+    /**
+     * Get bitmap with maximum height or width
+     *
+     * @param imagePath
+     * @param width
+     * @param height
+     * @return image
+     */
+    public static Bitmap getBitmap(final String imagePath, final int width, final int height) {
+        final Point size       = getSize(imagePath);
+        int         currWidth  = size.x;
+        int         currHeight = size.y;
+        int         scale      = 1;
+
+        while ((currWidth >= width) || (currHeight >= height)) {
+            currWidth  /= 2;
+            currHeight /= 2;
+            scale      *= 2;
+        }
+
+        return getBitmap(imagePath, scale);
+    }
+
+    /**
+     * Load a {@link Bitmap} from the given {@link File} and set it on the given
+     * {@link ImageView}
+     *
+     * @param image
+     * @param view
+     */
+    public static void setImage(final File image, final ImageView view) {
+        final Bitmap bitmap = getBitmap(image);
+
+        if (bitmap != null) {
+            view.setImageBitmap(bitmap);
+        }
+    }
+
+    /**
+     * Load a {@link Bitmap} from the given path and set it on the given
+     * {@link ImageView}
+     *
+     * @param imagePath
+     * @param view
+     */
+    public static void setImage(final String imagePath, final ImageView view) {
+        setImage(new File(imagePath), view);
+    }
+
+    /**
      * Get size of image
      *
      * @param imagePath
@@ -120,108 +219,5 @@ public final class ImageUtils {
                 }
             }
         }
-    }
-
-    /**
-     * Get bitmap with maximum height or width
-     *
-     * @param imagePath
-     * @param width
-     * @param height
-     * @return image
-     */
-    public static Bitmap getBitmap(final String imagePath, final int width, final int height) {
-        final Point size       = getSize(imagePath);
-        int         currWidth  = size.x;
-        int         currHeight = size.y;
-        int         scale      = 1;
-
-        while ((currWidth >= width) || (currHeight >= height)) {
-            currWidth  /= 2;
-            currHeight /= 2;
-            scale      *= 2;
-        }
-
-        return getBitmap(imagePath, scale);
-    }
-
-    /**
-     * Get bitmap with maximum height or width
-     *
-     * @param image
-     * @param width
-     * @param height
-     * @return image
-     */
-    public static Bitmap getBitmap(final File image, final int width, final int height) {
-        return getBitmap(image.getAbsolutePath(), width, height);
-    }
-
-    /**
-     * Get a bitmap from the image file
-     *
-     * @param image
-     * @return bitmap or null if read fails
-     */
-    public static Bitmap getBitmap(final File image) {
-        return getBitmap(image.getAbsolutePath());
-    }
-
-    /**
-     * Load a {@link Bitmap} from the given path and set it on the given
-     * {@link ImageView}
-     *
-     * @param imagePath
-     * @param view
-     */
-    public static void setImage(final String imagePath, final ImageView view) {
-        setImage(new File(imagePath), view);
-    }
-
-    /**
-     * Load a {@link Bitmap} from the given {@link File} and set it on the given
-     * {@link ImageView}
-     *
-     * @param image
-     * @param view
-     */
-    public static void setImage(final File image, final ImageView view) {
-        final Bitmap bitmap = getBitmap(image);
-
-        if (bitmap != null) {
-            view.setImageBitmap(bitmap);
-        }
-    }
-
-    /**
-     * Round the corners of a {@link Bitmap}
-     *
-     * @param source
-     * @param radius
-     * @return rounded corner bitmap
-     */
-    public static Bitmap roundCorners(final Bitmap source, final float radius) {
-        final int   width  = source.getWidth();
-        final int   height = source.getHeight();
-        final Paint paint  = new Paint();
-
-        paint.setAntiAlias(true);
-        paint.setColor(WHITE);
-
-        final Bitmap clipped = Bitmap.createBitmap(width, height, ARGB_8888);
-        Canvas       canvas  = new Canvas(clipped);
-
-        canvas.drawRoundRect(new RectF(0, 0, width, height), radius, radius, paint);
-        paint.setXfermode(new PorterDuffXfermode(DST_IN));
-
-        final Bitmap rounded = Bitmap.createBitmap(width, height, ARGB_8888);
-
-        canvas = new Canvas(rounded);
-        canvas.drawBitmap(source, 0, 0, null);
-        canvas.drawBitmap(clipped, 0, 0, paint);
-        source.recycle();
-        clipped.recycle();
-
-        return rounded;
     }
 }

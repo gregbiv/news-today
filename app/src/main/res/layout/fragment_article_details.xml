@@ -6,13 +6,13 @@
     android:layout_height="match_parent">
 
     <com.github.gregbiv.news.ui.widget.BetterViewAnimator
-        android:id="@+id/news_animator"
+        android:id="@+id/article_animator"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:inAnimation="@android:anim/fade_in"
         android:outAnimation="@android:anim/fade_out">
 
-        <include layout="@layout/item_news_details" />
+        <include layout="@layout/item_article_details" />
         <include layout="@layout/partial_view_loading" />
 
         <com.github.gregbiv.news.ui.widget.AnimatorStateView

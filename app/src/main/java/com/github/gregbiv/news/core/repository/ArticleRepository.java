@@ -8,18 +8,14 @@
  */
 package com.github.gregbiv.news.core.repository;
 
-//~--- non-JDK imports --------------------------------------------------------
+import java.util.List;
 
 import com.github.gregbiv.news.core.model.Article;
 
 import rx.Observable;
 
-//~--- JDK imports ------------------------------------------------------------
-
-import java.util.List;
-
 public interface ArticleRepository {
-    Observable<List<Article>> search(String category, String text, int limit, int offset);
-    Observable<List<Article>> searchAndGroupBy(String category, String text, String groupBy, String dateRange);
+    Observable<List<Article>> search(String source, String text, int limit, int offset);
+    Observable<List<Article>> searchAndGroupBy(String source, String text, String groupBy);
     Observable<Article> getOne(int id);
 }

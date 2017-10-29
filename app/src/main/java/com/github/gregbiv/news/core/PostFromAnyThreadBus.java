@@ -3,18 +3,16 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @author  Gregory Kornienko <gregbiv@gmail.com>
+ * @author Gregory Kornienko <gregbiv@gmail.com>
  * @license MIT
  */
 package com.github.gregbiv.news.core;
 
-//~--- non-JDK imports --------------------------------------------------------
+import com.squareup.otto.Bus;
+import com.squareup.otto.ThreadEnforcer;
 
 import android.os.Handler;
 import android.os.Looper;
-
-import com.squareup.otto.Bus;
-import com.squareup.otto.ThreadEnforcer;
 
 import timber.log.Timber;
 

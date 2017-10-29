@@ -8,9 +8,8 @@
  */
 package com.github.gregbiv.news.ui.listener;
 
-//~--- non-JDK imports --------------------------------------------------------
-
-import android.support.v7.widget.RecyclerView;
+import java.util.List;
+import java.util.Queue;
 
 import com.bumptech.glide.GenericRequestBuilder;
 import com.bumptech.glide.Glide;
@@ -19,10 +18,7 @@ import com.bumptech.glide.request.target.BaseTarget;
 import com.bumptech.glide.request.target.SizeReadyCallback;
 import com.bumptech.glide.util.Util;
 
-//~--- JDK imports ------------------------------------------------------------
-
-import java.util.List;
-import java.util.Queue;
+import android.support.v7.widget.RecyclerView;
 
 /**
  * Loads a few resources ahead in the direction of scrolling in any {@link RecyclerView} so that
@@ -95,6 +91,12 @@ public abstract class RecyclerViewPreloader<T> extends RecyclerView.OnScrollList
         preloadTargetQueue            = new PreloadTargetQueue(maxPreload + 1);
     }
 
+    private void cancelAll() {
+        for (int i = 0; i < maxPreload; i++) {
+            Glide.clear(preloadTargetQueue.next(0, 0));
+        }
+    }
+
     @Override
     public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
 
@@ -105,6 +107,75 @@ public abstract class RecyclerViewPreloader<T> extends RecyclerView.OnScrollList
      * This method must call {@link RecyclerViewPreloader#processScroll(int, int, int)} with appropriate parameters
      */
     public abstract void onScrolled(RecyclerView recyclerView, int dx, int dy);
+
+    private void preload(int start, boolean increasing) {
+        if (isIncreasing != increasing) {
+            isIncreasing = increasing;
+            cancelAll();
+        }
+
+        preload(start, start + (increasing
+                                ? maxPreload
+                                : -maxPreload));
+    }
+
+    private void preload(int from, int to) {
+        int start;
+        int end;
+
+        if (from < to) {
+            start = Math.max(lastEnd, from);
+            end   = to;
+        } else {
+            start = to;
+            end   = Math.min(lastStart, from);
+        }
+
+        end   = Math.min(totalItemCount, end);
+        start = Math.min(totalItemCount, Math.max(0, start));
+
+        if (from < to) {
+
+            // Increasing
+            for (int i = start; i < end; i++) {
+                preloadAdapterPosition(this.preloadModelProvider.getPreloadItems(i), i, true);
+            }
+        } else {
+
+            // Decreasing
+            for (int i = end - 1; i >= start; i--) {
+                preloadAdapterPosition(this.preloadModelProvider.getPreloadItems(i), i, false);
+            }
+        }
+
+        lastStart = start;
+        lastEnd   = end;
+    }
+
+    private void preloadAdapterPosition(List<T> items, int position, boolean isIncreasing) {
+        final int numItems = items.size();
+
+        if (isIncreasing) {
+            for (int i = 0; i < numItems; ++i) {
+                preloadItem(items.get(i), position, i);
+            }
+        } else {
+            for (int i = numItems - 1; i >= 0; --i) {
+                preloadItem(items.get(i), position, i);
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void preloadItem(T item, int position, int i) {
+        final int[] dimensions = this.preloadDimensionProvider.getPreloadSize(item, position, i);
+
+        if (dimensions != null) {
+            GenericRequestBuilder preloadRequestBuilder = this.preloadModelProvider.getPreloadRequestBuilder(item);
+
+            preloadRequestBuilder.into(preloadTargetQueue.next(dimensions[0], dimensions[1]));
+        }
+    }
 
     /**
      * Method, which must be called in {@link RecyclerViewPreloader#onScrolled(RecyclerView, int, int)} with appropriate
@@ -181,81 +252,6 @@ public abstract class RecyclerViewPreloader<T> extends RecyclerView.OnScrollList
     protected GenericRequestBuilder getRequestBuilder(T item) {
         throw new IllegalStateException("You must either provide a PreloadModelProvider, or override "
                                         + "getRequestBuilder()");
-    }
-
-    private void preload(int start, boolean increasing) {
-        if (isIncreasing != increasing) {
-            isIncreasing = increasing;
-            cancelAll();
-        }
-
-        preload(start, start + (increasing
-                                ? maxPreload
-                                : -maxPreload));
-    }
-
-    private void preload(int from, int to) {
-        int start;
-        int end;
-
-        if (from < to) {
-            start = Math.max(lastEnd, from);
-            end   = to;
-        } else {
-            start = to;
-            end   = Math.min(lastStart, from);
-        }
-
-        end   = Math.min(totalItemCount, end);
-        start = Math.min(totalItemCount, Math.max(0, start));
-
-        if (from < to) {
-
-            // Increasing
-            for (int i = start; i < end; i++) {
-                preloadAdapterPosition(this.preloadModelProvider.getPreloadItems(i), i, true);
-            }
-        } else {
-
-            // Decreasing
-            for (int i = end - 1; i >= start; i--) {
-                preloadAdapterPosition(this.preloadModelProvider.getPreloadItems(i), i, false);
-            }
-        }
-
-        lastStart = start;
-        lastEnd   = end;
-    }
-
-    private void preloadAdapterPosition(List<T> items, int position, boolean isIncreasing) {
-        final int numItems = items.size();
-
-        if (isIncreasing) {
-            for (int i = 0; i < numItems; ++i) {
-                preloadItem(items.get(i), position, i);
-            }
-        } else {
-            for (int i = numItems - 1; i >= 0; --i) {
-                preloadItem(items.get(i), position, i);
-            }
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void preloadItem(T item, int position, int i) {
-        final int[] dimensions = this.preloadDimensionProvider.getPreloadSize(item, position, i);
-
-        if (dimensions != null) {
-            GenericRequestBuilder preloadRequestBuilder = this.preloadModelProvider.getPreloadRequestBuilder(item);
-
-            preloadRequestBuilder.into(preloadTargetQueue.next(dimensions[0], dimensions[1]));
-        }
-    }
-
-    private void cancelAll() {
-        for (int i = 0; i < maxPreload; i++) {
-            Glide.clear(preloadTargetQueue.next(0, 0));
-        }
     }
 
     /**

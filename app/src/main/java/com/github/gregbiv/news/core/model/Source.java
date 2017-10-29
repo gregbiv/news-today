@@ -8,24 +8,21 @@
  */
 package com.github.gregbiv.news.core.model;
 
-//~--- non-JDK imports --------------------------------------------------------
+import java.io.Serializable;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.github.gregbiv.news.core.provider.meta.SourceMeta;
+
+import com.google.gson.annotations.Expose;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.gson.annotations.Expose;
-
-import com.github.gregbiv.news.core.provider.meta.SourceMeta;
-
-//~--- JDK imports ------------------------------------------------------------
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
 public class Source implements Serializable, Parcelable, SourceMeta {
-    private static final long             serialVersionUID = -104137709256566564L;
-    public static final Creator<Source> CREATOR            = new Creator<Source>() {
+    private static final long           serialVersionUID = -104137709256566564L;
+    public static final Creator<Source> CREATOR          = new Creator<Source>() {
         public Source createFromParcel(Parcel source) {
             return new Source(source);
         }
@@ -36,13 +33,11 @@ public class Source implements Serializable, Parcelable, SourceMeta {
     @Expose
     private int    id;
     @Expose
-    private String name;
+    private String title;
     @Expose
     private String description;
     @Expose
     private String url;
-    @Expose
-    private String category;
     @Expose
     private String language;
     @Expose
@@ -52,12 +47,26 @@ public class Source implements Serializable, Parcelable, SourceMeta {
 
     protected Source(Parcel in) {
         this.id          = in.readInt();
-        this.name        = in.readString();
+        this.title       = in.readString();
         this.description = in.readString();
         this.url         = in.readString();
-        this.category    = in.readString();
         this.language    = in.readString();
         this.country     = in.readString();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.id);
+        dest.writeString(this.title);
+        dest.writeString(this.description);
+        dest.writeString(this.url);
+        dest.writeString(this.language);
+        dest.writeString(this.country);
     }
 
     public int getId() {
@@ -69,12 +78,12 @@ public class Source implements Serializable, Parcelable, SourceMeta {
         return this;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public Source setName(String name) {
-        this.name = name;
+    public Source setTitle(String title) {
+        this.title = title;
         return this;
     }
 
@@ -96,15 +105,6 @@ public class Source implements Serializable, Parcelable, SourceMeta {
         return this;
     }
 
-    public String getCategory() {
-        return category;
-    }
-
-    public Source setCategory(String category) {
-        this.category = category;
-        return this;
-    }
-
     public String getLanguage() {
         return language;
     }
@@ -121,22 +121,6 @@ public class Source implements Serializable, Parcelable, SourceMeta {
     public Source setCountry(String country) {
         this.country = country;
         return this;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(this.id);
-        dest.writeString(this.name);
-        dest.writeString(this.description);
-        dest.writeString(this.url);
-        dest.writeString(this.category);
-        dest.writeString(this.language);
-        dest.writeString(this.country);
     }
 
     public static final class Response {

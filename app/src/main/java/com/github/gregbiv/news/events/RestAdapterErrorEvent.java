@@ -8,8 +8,6 @@
  */
 package com.github.gregbiv.news.events;
 
-//~--- non-JDK imports --------------------------------------------------------
-
 import retrofit.RetrofitError;
 
 /**

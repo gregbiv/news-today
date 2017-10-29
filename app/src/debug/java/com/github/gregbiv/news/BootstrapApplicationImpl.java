@@ -8,16 +8,15 @@
  */
 package com.github.gregbiv.news;
 
-//~--- non-JDK imports --------------------------------------------------------
-
 import timber.log.Timber;
 
 public class BootstrapApplicationImpl extends BootstrapApplication {
     @Override
-    protected void onAfterInjection() {}
-
-    @Override
     protected void init() {
         Timber.plant(new Timber.DebugTree());
     }
+
+    @Override
+    protected void onAfterInjection() {}
 }
+

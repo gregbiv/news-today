@@ -8,21 +8,19 @@
  */
 package com.github.gregbiv.news;
 
-//~--- non-JDK imports --------------------------------------------------------
-
-import android.support.test.rule.ActivityTestRule;
-import android.support.test.runner.AndroidJUnit4;
-
-import com.github.gregbiv.news.ui.activity.BrowseNewsActivity;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import com.github.gregbiv.news.ui.activity.BrowseArticlesActivity;
+
+import android.support.test.rule.ActivityTestRule;
+import android.support.test.runner.AndroidJUnit4;
+
 @RunWith(AndroidJUnit4.class)
 public class MainActivityTest {
     @Rule
-    public final ActivityTestRule<BrowseNewsActivity> main = new ActivityTestRule<>(BrowseNewsActivity.class);
+    public final ActivityTestRule<BrowseArticlesActivity> main = new ActivityTestRule<>(BrowseArticlesActivity.class);
 
     @Test
     public void shouldBeAbleToLaunchTheHomeScreen() {
@@ -30,3 +28,4 @@ public class MainActivityTest {
         // onView(withText())
     }
 }
+

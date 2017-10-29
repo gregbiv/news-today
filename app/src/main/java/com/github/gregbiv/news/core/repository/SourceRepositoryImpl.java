@@ -8,26 +8,27 @@
  */
 package com.github.gregbiv.news.core.repository;
 
-import com.github.gregbiv.news.core.model.Category;
+import java.util.Map;
+
+import com.github.gregbiv.news.core.model.Source;
 import com.github.gregbiv.news.core.provider.NewsContract;
 import com.squareup.sqlbrite.BriteContentResolver;
 
-import java.util.Map;
-
 import rx.Observable;
+
 import rx.schedulers.Schedulers;
 
-public final class CategoryRepositoryImpl implements CategoryRepository {
+public final class SourceRepositoryImpl implements SourceRepository {
     private final BriteContentResolver mBriteContentResolver;
 
-    public CategoryRepositoryImpl(BriteContentResolver briteContentResolver) {
+    public SourceRepositoryImpl(BriteContentResolver briteContentResolver) {
         mBriteContentResolver = briteContentResolver;
     }
 
     @Override
-    public Observable<Map<Integer, Category>> categories() {
-        return mBriteContentResolver.createQuery(NewsContract.Categories.CONTENT_URI, Category.PROJECTION, null, null, null, true)
-                .map(Category.PROJECTION_MAP)
+    public Observable<Map<Integer, Source>> sources() {
+        return mBriteContentResolver.createQuery(NewsContract.Sources.CONTENT_URI, Source.PROJECTION, null, null, null, true)
+                .map(Source.PROJECTION_MAP)
                 .subscribeOn(Schedulers.io());
     }
 }

@@ -8,8 +8,6 @@
  */
 package com.github.gregbiv.news.util;
 
-//~--- non-JDK imports --------------------------------------------------------
-
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -22,6 +20,12 @@ public final class PrefUtils {
     public static final String PREF_BROWSE_NEWS_MODE  = "pref_browse_news_mode";
     public static final String PREF_SELECTED_POSITION = "pref_selected_position";
     public static final String MODE_FEED              = "mode_feed";
+
+    public static void clear(final Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+
+        sp.edit().clear().apply();
+    }
 
     public static String getBrowseNewsMode(final Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
@@ -45,11 +49,5 @@ public final class PrefUtils {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
 
         sp.edit().putInt(PREF_SELECTED_POSITION, position).apply();
-    }
-
-    public static void clear(final Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-
-        sp.edit().clear().apply();
     }
 }

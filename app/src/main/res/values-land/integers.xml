@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <integer name="news_columns">1</integer>
+    <integer name="article_columns">1</integer>
 </resources>

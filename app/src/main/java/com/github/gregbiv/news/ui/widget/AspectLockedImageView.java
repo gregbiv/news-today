@@ -8,7 +8,7 @@
  */
 package com.github.gregbiv.news.ui.widget;
 
-//~--- non-JDK imports --------------------------------------------------------
+import com.github.gregbiv.news.R;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -18,8 +18,6 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import android.widget.ImageView;
-
-import com.github.gregbiv.news.R;
 
 public final class AspectLockedImageView extends ImageView {
     private float             aspectRatio       = 0;
@@ -81,14 +79,6 @@ public final class AspectLockedImageView extends ImageView {
         }
     }
 
-    public void setAspectRatioSource(View v) {
-        this.aspectRatioSource = new ViewAspectRatioSource(v);
-    }
-
-    public void setAspectRatioSource(AspectRatioSource aspectRatioSource) {
-        this.aspectRatioSource = aspectRatioSource;
-    }
-
     // from com.android.camera.PreviewFrameLayout, with slight
     // modifications
     public void setAspectRatio(float aspectRatio) {
@@ -102,10 +92,18 @@ public final class AspectLockedImageView extends ImageView {
         }
     }
 
-    public interface AspectRatioSource {
-        int getWidth();
+    public void setAspectRatioSource(AspectRatioSource aspectRatioSource) {
+        this.aspectRatioSource = aspectRatioSource;
+    }
 
+    public void setAspectRatioSource(View v) {
+        this.aspectRatioSource = new ViewAspectRatioSource(v);
+    }
+
+    public interface AspectRatioSource {
         int getHeight();
+
+        int getWidth();
     }
 
 
@@ -117,13 +115,13 @@ public final class AspectLockedImageView extends ImageView {
         }
 
         @Override
-        public int getWidth() {
-            return (v.getWidth());
+        public int getHeight() {
+            return (v.getHeight());
         }
 
         @Override
-        public int getHeight() {
-            return (v.getHeight());
+        public int getWidth() {
+            return (v.getWidth());
         }
     }
 }

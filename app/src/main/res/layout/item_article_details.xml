@@ -1,12 +1,12 @@
 <com.github.ksoichiro.android.observablescrollview.ObservableScrollView
-    android:id="@+id/news_scroll_view"
+    android:id="@+id/article_scroll_view"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginEnd="@dimen/news_details_margin"
-    android:layout_marginRight="@dimen/news_details_margin"
+    android:layout_marginEnd="@dimen/article_details_margin"
+    android:layout_marginRight="@dimen/article_details_margin"
     android:fillViewport="true">
 
     <RelativeLayout
@@ -15,37 +15,37 @@
         android:clipChildren="false">
 
         <FrameLayout
-            android:id="@+id/news_illustration_container"
+            android:id="@+id/article_illustration_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/news_details_margin"
+            android:layout_marginTop="@dimen/article_details_margin"
             android:clickable="true"
             android:foreground="?photoItemForeground">
 
             <com.github.gregbiv.news.ui.widget.AspectLockedImageView
-                android:id="@+id/news_illustration"
+                android:id="@+id/article_illustration"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@android:color/white"
                 android:contentDescription="@null"
                 android:scaleType="centerCrop"
-                app:imageAspectRatio="@dimen/news_details_illustration_aspect_ratio"
-                tools:src="@drawable/placeholder_news_details_image" />
+                app:imageAspectRatio="@dimen/article_details_illustration_aspect_ratio"
+                tools:src="@drawable/placeholder_article_details_image" />
         </FrameLayout>
 
         <View
             android:id="@+id/anchor"
             style="@style/NewsDetailAnchor"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/news_details_anchor_height" />
+            android:layout_height="@dimen/article_details_anchor_height" />
 
         <!-- Details -->
         <LinearLayout
-            android:layout_width="@dimen/news_details_responsive_width"
+            android:layout_width="@dimen/article_details_responsive_width"
             android:layout_height="wrap_content"
             android:layout_below="@id/anchor"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="@dimen/news_details_content_margin_bottom"
+            android:layout_marginBottom="@dimen/article_details_content_margin_bottom"
             android:background="@android:color/white"
             android:clickable="true"
             android:clipChildren="false"
@@ -63,7 +63,7 @@
                     android:padding="@dimen/keyline_1">
 
                     <TextView
-                        android:id="@+id/news_title"
+                        android:id="@+id/article_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@color/body_text_1"
@@ -72,7 +72,7 @@
                         tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit." />
 
                     <TextView
-                        android:id="@+id/news_date"
+                        android:id="@+id/article_date"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@color/body_text_2"
@@ -89,7 +89,7 @@
                 android:background="@color/list_dropdown_divider_color" />
 
             <TextView
-                android:id="@+id/news_overview"
+                android:id="@+id/article_overview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/keyline_1"

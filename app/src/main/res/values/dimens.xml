@@ -18,7 +18,7 @@
     <dimen name="toolbar_elevation">8dp</dimen>
 
     <!-- BroArticleNews -->
-    <item name="news_item_image_aspect_ratio" format="float" type="dimen">.675</item>
+    <item name="article_item_image_aspect_ratio" format="float" type="dimen">.675</item>
     <dimen name="spinner_left_padding">0dp</dimen>
     <dimen name="spinner_drawable_padding">16dp</dimen>
     <dimen name="explore_spinner_width">200dp</dimen>
@@ -39,11 +39,11 @@
     <dimen name="default_divider_height">1dp</dimen>
     <dimen name="default_divider_padding">4dp</dimen>
 
-    <ArticleNews Details -->
-    <item name="news_details_illustration_aspect_ratio" format="float" type="dimen">1.77</item>
-    <dimen name="news_details_responsive_width">@dimen/match_parent</dimen>
-    <dimen name="news_details_anchor_height">@dimen/match_parent</dimen>
-    <dimen name="news_details_margin">0dp</dimen>
-    <dimen name="news_details_content_margin_bottom">0dp</dimen>
+    <!-- News Details -->
+    <item name="article_details_illustration_aspect_ratio" format="float" type="dimen">1.77</item>
+    <dimen name="article_details_responsive_width">@dimen/match_parent</dimen>
+    <dimen name="article_details_anchor_height">@dimen/match_parent</dimen>
+    <dimen name="article_details_margin">0dp</dimen>
+    <dimen name="article_details_content_margin_bottom">0dp</dimen>
 
 </resources>

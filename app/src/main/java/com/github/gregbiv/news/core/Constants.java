@@ -8,8 +8,6 @@
  */
 package com.github.gregbiv.news.core;
 
-//~--- non-JDK imports --------------------------------------------------------
-
 import com.github.gregbiv.news.BuildConfig;
 
 /**
@@ -28,7 +26,7 @@ public final class Constants {
         /**
          * Account name
          */
-        public static final String BOOTSTRAP_ACCOUNT_NAME = "Article";
+        public static final String BOOTSTRAP_ACCOUNT_NAME = "News";
 
         /**
          * Provider id
@@ -45,10 +43,9 @@ public final class Constants {
 
 
     public static final class Extra {
-        public static final String NEWS_ITEMS    = "news_items";
-        public static final String NEWS_ITEM     = "news_item";
-        public static final String CATEGORY_ITEM = "category_item";
-        public static final String PERSON_ITEM   = "category_item";
+        public static final String ARTICLE_ITEMS = "article_items";
+        public static final String ARTICLE_ITEM  = "article_item";
+        public static final String SOURCE_ITEM   = "source_item";
 
         private Extra() {}
     }
@@ -64,10 +61,13 @@ public final class Constants {
         /**
          * Base URL for all requests
          */
-        public static final String URL_BASE = "https://newsapi.org/";
-        public static final String ARTICLES = "v1/articles";
-        public static final String SOURCES  = "v1/sources";
-        public static final int    PER_PAGE = 10;
+        public static final String URL_BASE                     = "https://newsapi.org/";
+        public static final String ARTICLES_GET_ONE             = "v1/articles";
+        public static final String ARTICLES_SEARCH              = "v1/articles";
+        public static final String ARTICLES_SEARCH_AND_GROUP_BY = "v1/articles";
+        public static final String SOURCES                      = "v1/sources";
+        public static final String CATEGORIES                   = "v1/categories";
+        public static final int    PER_PAGE                     = 10;
 
         /**
          * PARAMS for auth

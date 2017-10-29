@@ -8,11 +8,9 @@
  */
 package com.github.gregbiv.news.logging;
 
-//~--- non-JDK imports --------------------------------------------------------
+import com.crashlytics.android.Crashlytics;
 
 import android.util.Log;
-
-import com.crashlytics.android.Crashlytics;
 
 import timber.log.Timber;
 
@@ -35,3 +33,4 @@ public class CrashlyticsTree extends Timber.Tree {
         }
     }
 }
+

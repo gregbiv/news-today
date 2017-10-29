@@ -1,12 +1,10 @@
 package com.github.gregbiv.news;
 
-//~--- non-JDK imports --------------------------------------------------------
+import com.squareup.leakcanary.RefWatcher;
 
 import android.app.Application;
 
 import android.content.Context;
-
-import com.squareup.leakcanary.RefWatcher;
 
 /**
  * Article application
@@ -21,9 +19,19 @@ public abstract class BootstrapApplication extends Application {
      */
     public BootstrapApplication() {}
 
-    public static BootstrapApplication get(Context context) {
-        return (BootstrapApplication) context.getApplicationContext();
+    public static BootstrapComponent component() {
+        return instance.component;
     }
+
+    protected abstract void init();
+
+    protected RefWatcher installLeakCanary() {
+
+        // return LeakCanary.install(this);
+        return RefWatcher.DISABLED;
+    }
+
+    protected abstract void onAfterInjection();
 
     @Override
     public void onCreate() {
@@ -38,26 +46,16 @@ public abstract class BootstrapApplication extends Application {
         onAfterInjection();
     }
 
-    public static BootstrapComponent component() {
-        return instance.component;
-    }
-
-    protected abstract void onAfterInjection();
-
-    protected abstract void init();
-
-    public static BootstrapApplication getInstance() {
-        return instance;
-    }
-
     public BootstrapComponent getComponent() {
         return component;
     }
 
-    protected RefWatcher installLeakCanary() {
+    public static BootstrapApplication get(Context context) {
+        return (BootstrapApplication) context.getApplicationContext();
+    }
 
-        // return LeakCanary.install(this);
-        return RefWatcher.DISABLED;
+    public static BootstrapApplication getInstance() {
+        return instance;
     }
 
     public RefWatcher getRefWatcher() {
@@ -66,8 +64,10 @@ public abstract class BootstrapApplication extends Application {
 
     public final static class DaggerComponentInitializer {
         public static BootstrapComponent init() {
-            return DaggerBootstrapComponent.builder().androidModule(new AndroidModule()).bootstrapModule(
-                new BootstrapModule()).build();
+            return DaggerBootstrapComponent.builder()
+                                           .androidModule(new AndroidModule())
+                                           .bootstrapModule(new BootstrapModule())
+                                           .build();
         }
     }
 }

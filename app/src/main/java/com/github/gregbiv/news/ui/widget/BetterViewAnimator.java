@@ -8,8 +8,6 @@
  */
 package com.github.gregbiv.news.ui.widget;
 
-//~--- non-JDK imports --------------------------------------------------------
-
 import android.content.Context;
 
 import android.util.AttributeSet;
@@ -19,6 +17,10 @@ import android.widget.ViewAnimator;
 public final class BetterViewAnimator extends ViewAnimator {
     public BetterViewAnimator(Context context, AttributeSet attrs) {
         super(context, attrs);
+    }
+
+    public int getDisplayedChildId() {
+        return getChildAt(getDisplayedChild()).getId();
     }
 
     public void setDisplayedChildId(int id) {
@@ -37,9 +39,5 @@ public final class BetterViewAnimator extends ViewAnimator {
         String name = getResources().getResourceEntryName(id);
 
         throw new IllegalArgumentException("No view with ID " + name);
-    }
-
-    public int getDisplayedChildId() {
-        return getChildAt(getDisplayedChild()).getId();
     }
 }

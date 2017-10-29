@@ -18,16 +18,6 @@
 
 package com.github.gregbiv.news.util;
 
-//~--- non-JDK imports --------------------------------------------------------
-
-import android.support.annotation.NonNull;
-
-import android.text.TextUtils;
-
-import timber.log.Timber;
-
-//~--- JDK imports ------------------------------------------------------------
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
@@ -35,30 +25,17 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import android.support.annotation.NonNull;
+
+import android.text.TextUtils;
+
+import timber.log.Timber;
+
 public final class UIUtils {
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
     private UIUtils() {
         throw new AssertionError("No instances.");
-    }
-
-    public static String getDisplayDate(String date) {
-        if (TextUtils.isEmpty(date)) {
-            return "";
-        }
-
-        try {
-            Calendar calendar = Calendar.getInstance();
-
-            calendar.setTime(DATE_FORMAT.parse(date));
-
-            return calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault()) + " "
-                   + calendar.get(Calendar.YEAR);
-        } catch (ParseException e) {
-            Timber.e(e, "Failed to parse release date.");
-
-            return "";
-        }
     }
 
     public static String joinStrings(List<String> strings, String delimiter, @NonNull StringBuilder builder) {
@@ -75,5 +52,25 @@ public final class UIUtils {
         }
 
         return builder.toString();
+    }
+
+    public static String getDisplayDate(String date) {
+        if (TextUtils.isEmpty(date)) {
+            return "";
+        }
+
+        try {
+            Calendar calendar = Calendar.getInstance();
+
+            calendar.setTime(DATE_FORMAT.parse(date));
+
+            return calendar.getDisplayName(Calendar.MONTH,
+                                           Calendar.LONG,
+                                           Locale.getDefault()) + " " + calendar.get(Calendar.YEAR);
+        } catch (ParseException e) {
+            Timber.e(e, "Failed to parse release date.");
+
+            return "";
+        }
     }
 }

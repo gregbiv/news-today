@@ -8,8 +8,6 @@
  */
 package com.github.gregbiv.news.core.sync;
 
-//~--- non-JDK imports --------------------------------------------------------
-
 import android.app.Service;
 
 import android.content.Intent;
@@ -23,6 +21,11 @@ public class NewsSyncService extends Service {
     private static NewsSyncAdapter sNewsSyncAdapter = null;
 
     @Override
+    public IBinder onBind(Intent intent) {
+        return sNewsSyncAdapter.getSyncAdapterBinder();
+    }
+
+    @Override
     public void onCreate() {
         Timber.d("onCreate");
 
@@ -31,10 +34,5 @@ public class NewsSyncService extends Service {
                 sNewsSyncAdapter = new NewsSyncAdapter(getApplicationContext(), true);
             }
         }
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return sNewsSyncAdapter.getSyncAdapterBinder();
     }
 }

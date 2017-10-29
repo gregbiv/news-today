@@ -8,18 +8,18 @@
     android:layout_height="match_parent">
 
     <com.github.gregbiv.news.ui.widget.BetterViewAnimator
-        android:id="@+id/news_animator"
+        android:id="@+id/article_animator"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:inAnimation="@android:anim/fade_in"
         android:outAnimation="@android:anim/fade_out">
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/news_recycler_view"
+            android:id="@+id/article_recycler_view"
             style="@style/CollectionView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:listitem="@layout/item_news" />
+            tools:listitem="@layout/item_article" />
 
         <include layout="@layout/partial_view_loading" />
 

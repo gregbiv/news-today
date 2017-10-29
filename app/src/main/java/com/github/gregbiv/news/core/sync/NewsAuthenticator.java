@@ -3,12 +3,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @author  Gregory Kornienko <gregbiv@gmail.com>
+ * @author Gregory Kornienko <gregbiv@gmail.com>
  * @license MIT
  */
 package com.github.gregbiv.news.core.sync;
-
-//~--- non-JDK imports --------------------------------------------------------
 
 import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;
@@ -32,12 +30,6 @@ public class NewsAuthenticator extends AbstractAccountAuthenticator {
         super(context);
     }
 
-    // No properties to edit.
-    @Override
-    public Bundle editProperties(AccountAuthenticatorResponse r, String s) {
-        throw new UnsupportedOperationException();
-    }
-
     // Because we're not actually adding an account to the device, just return null.
     @Override
     public Bundle addAccount(AccountAuthenticatorResponse r, String s, String s2, String[] strings, Bundle bundle)
@@ -52,6 +44,19 @@ public class NewsAuthenticator extends AbstractAccountAuthenticator {
         return null;
     }
 
+    // No properties to edit.
+    @Override
+    public Bundle editProperties(AccountAuthenticatorResponse r, String s) {
+        throw new UnsupportedOperationException();
+    }
+
+    // Updating user credentials is not supported
+    @Override
+    public Bundle updateCredentials(AccountAuthenticatorResponse r, Account account, String s, Bundle bundle)
+            throws NetworkErrorException {
+        throw new UnsupportedOperationException();
+    }
+
     // Getting an authentication token is not supported
     @Override
     public Bundle getAuthToken(AccountAuthenticatorResponse r, Account account, String s, Bundle bundle)
@@ -62,13 +67,6 @@ public class NewsAuthenticator extends AbstractAccountAuthenticator {
     // Getting a label for the auth token is not supported
     @Override
     public String getAuthTokenLabel(String s) {
-        throw new UnsupportedOperationException();
-    }
-
-    // Updating user credentials is not supported
-    @Override
-    public Bundle updateCredentials(AccountAuthenticatorResponse r, Account account, String s, Bundle bundle)
-            throws NetworkErrorException {
         throw new UnsupportedOperationException();
     }
 

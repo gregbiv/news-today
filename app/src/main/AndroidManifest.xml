@@ -23,7 +23,7 @@
         android:theme="@style/Theme.News">
 
         <activity
-            android:name=".ui.activity.BrowseNewsActivity"
+            android:name=".ui.activity.BrowseArticlesActivity"
             android:label="@string/title_browse_news"
             android:theme="@style/Theme.News.BrowseNews">
             <intent-filter>
@@ -33,8 +33,8 @@
         </activity>
 
         <activity
-            android:name=".ui.activity.NewsDetailsActivity"
-            android:parentActivityName=".ui.activity.BrowseNewsActivity"
+            android:name=".ui.activity.ArticleDetailsActivity"
+            android:parentActivityName=".ui.activity.BrowseArticlesActivity"
             android:theme="@style/Theme.News.NewsDetails" />
 
         <provider

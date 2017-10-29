@@ -8,8 +8,6 @@
  */
 package com.github.gregbiv.news.util;
 
-//~--- JDK imports ------------------------------------------------------------
-
 import java.text.SimpleDateFormat;
 
 import java.util.Date;
@@ -41,6 +39,26 @@ public class DateUtils {
     }
 
     /**
+     * Formats a given date in the standard Java Date.toString(), using UTC
+     * instead of locale time zone.
+     *
+     * <pre>
+     * <code>
+     * System.out.println(UTCDate.toLegacyString(new Date()));
+     * >>> "Tue Jul 03 07:33:57 UTC 2012"
+     * </code>
+     * </pre>
+     *
+     * @param date
+     *            Valid Date object.
+     * @return The given date in Legacy Date.toString() format, e.g.
+     *         "Tue Jul 03 09:34:17 IDT 2012"
+     */
+    public static String toLegacyString(final Date date) {
+        return legacyFormatter.format(date);
+    }
+
+    /**
      * Formats a given date in a sortable ISO-8601 UTC format.
      *
      * <pre>
@@ -60,26 +78,6 @@ public class DateUtils {
      */
     public static String toString(final Date date) {
         return isoFormatter.format(date);
-    }
-
-    /**
-     * Formats a given date in the standard Java Date.toString(), using UTC
-     * instead of locale time zone.
-     *
-     * <pre>
-     * <code>
-     * System.out.println(UTCDate.toLegacyString(new Date()));
-     * >>> "Tue Jul 03 07:33:57 UTC 2012"
-     * </code>
-     * </pre>
-     *
-     * @param date
-     *            Valid Date object.
-     * @return The given date in Legacy Date.toString() format, e.g.
-     *         "Tue Jul 03 09:34:17 IDT 2012"
-     */
-    public static String toLegacyString(final Date date) {
-        return legacyFormatter.format(date);
     }
 
     /**

@@ -8,12 +8,12 @@
  */
 package com.github.gregbiv.news.core.repository;
 
-import com.github.gregbiv.news.core.model.Category;
+import com.github.gregbiv.news.core.model.Source;
 
 import java.util.Map;
 
 import rx.Observable;
 
-public interface CategoryRepository {
-    Observable<Map<Integer, Category>> categories();
+public interface SourceRepository {
+    Observable<Map<Integer, Source>> sources();
 }

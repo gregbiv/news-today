@@ -8,24 +8,30 @@
  */
 package com.github.gregbiv.news.core.api;
 
-//~--- non-JDK imports --------------------------------------------------------
-
 import com.github.gregbiv.news.core.Constants;
 import com.github.gregbiv.news.core.model.Article;
+import com.github.gregbiv.news.core.model.Category;
 import com.github.gregbiv.news.core.model.Source;
 
 import retrofit.http.GET;
 
+import retrofit.http.Query;
 import rx.Observable;
 
-//~--- JDK imports ------------------------------------------------------------
-
-import java.util.List;
-
 public interface NewsApi {
-    @GET(Constants.Http.ARTICLES)
-    Observable<List<Article>> articles();
-
     @GET(Constants.Http.SOURCES)
-    Observable<List<Source>> sources();
+    Observable<Source.Response> sources();
+
+    @GET(Constants.Http.CATEGORIES)
+    Observable<Category.Response> categories();
+
+    @GET(Constants.Http.ARTICLES_GET_ONE)
+    Observable<Article> getOne(@Query("id") int id);
+
+    @GET(Constants.Http.ARTICLES_SEARCH)
+    Observable<Article.Response> search(@Query("query[cat_id]") String category, @Query("text") String text,
+                                     @Query("limit") int limit, @Query("offset") int offset);
+
+    @GET(Constants.Http.ARTICLES_SEARCH_AND_GROUP_BY)
+    Observable<Article.Response> searchAndGroupBy(@Query("query[cat_id]") String category, @Query("text") String text, @Query("group_by") String groupBy);
 }
