@@ -45,6 +45,7 @@ public final class Constants {
     public static final class Extra {
         public static final String ARTICLE_ITEMS = "article_items";
         public static final String ARTICLE_ITEM  = "article_item";
+        public static final String CATEGORY_ITEM = "category_item";
         public static final String SOURCE_ITEM   = "source_item";
 
         private Extra() {}
@@ -61,12 +62,12 @@ public final class Constants {
         /**
          * Base URL for all requests
          */
-        public static final String URL_BASE                     = "https://newsapi.org/";
-        public static final String ARTICLES_GET_ONE             = "v1/articles";
-        public static final String ARTICLES_SEARCH              = "v1/articles";
-        public static final String ARTICLES_SEARCH_AND_GROUP_BY = "v1/articles";
-        public static final String SOURCES                      = "v1/sources";
-        public static final String CATEGORIES                   = "v1/categories";
+        public static final String URL_BASE                     = "https://private-f7848-newstoday.apiary-mock.com";
+        public static final String ARTICLES_GET_ONE             = "/articles/get-one";
+        public static final String ARTICLES_SEARCH              = "/articles/search";
+        public static final String ARTICLES_SEARCH_AND_GROUP_BY = "/articles/search";
+        public static final String SOURCES                      = "/sources";
+        public static final String CATEGORIES                   = "/categories";
         public static final int    PER_PAGE                     = 10;
 
         /**

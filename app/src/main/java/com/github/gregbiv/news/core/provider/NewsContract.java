@@ -29,9 +29,9 @@ public final class NewsContract {
     public interface SourcesColumns {
         String SOURCE_ID          = "source_id";
         String SOURCE_NAME        = "source_name";
+        String SOURCE_TITLE       = "source_title";
         String SOURCE_DESCRIPTION = "source_description";
         String SOURCE_URL         = "source_url";
-        String SOURCE_CATEGORY    = "source_category";
         String SOURCE_LANGUAGE    = "source_language";
         String SOURCE_COUNTRY     = "source_country";
     }

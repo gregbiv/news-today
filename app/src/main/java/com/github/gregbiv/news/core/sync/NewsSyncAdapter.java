@@ -120,10 +120,15 @@ public class NewsSyncAdapter extends AbstractThreadedSyncAdapter {
                 .retry(2)
                 .subscribe(
                         response -> {
-                            for (Source source : response.sources) {
+                            for (Source source : response.result) {
+                                Timber.d("Sync sources: " + response.result.size());
+
                                 mContext.getContentResolver()
                                         .insert(NewsContract.Sources.buildSourcesUri(),
-                                                new Source.Builder().id(source.getId())
+                                                new Source.Builder()
+                                                        .id(source.getId())
+                                                        .name(source.getName())
+                                                        .title(source.getTitle())
                                                         .description(source.getDescription())
                                                         .url(source.getUrl())
                                                         .language(source.getLanguage())
@@ -145,7 +150,9 @@ public class NewsSyncAdapter extends AbstractThreadedSyncAdapter {
                 .retry(2)
                 .subscribe(
                         response -> {
-                            for (Category category : response.categories) {
+                            for (Category category : response.result) {
+                                Timber.d("Sync categories: " + response.result.size());
+
                                 mContext.getContentResolver()
                                         .insert(NewsContract.Categories.buildCategoriesUri(),
                                                 new Category.Builder()

@@ -28,9 +28,9 @@ public interface SourceMeta {
             NewsContract.Sources._ID,
             NewsContract.Sources.SOURCE_ID,
             NewsContract.Sources.SOURCE_NAME,
+            NewsContract.Sources.SOURCE_TITLE,
             NewsContract.Sources.SOURCE_DESCRIPTION,
             NewsContract.Sources.SOURCE_URL,
-            NewsContract.Sources.SOURCE_CATEGORY,
             NewsContract.Sources.SOURCE_LANGUAGE,
             NewsContract.Sources.SOURCE_COUNTRY,
     };
@@ -46,7 +46,9 @@ public interface SourceMeta {
 
                 values.put(id,
                         new Source()
-                                .setId(id).setTitle(DbUtils.getString(cursor, NewsContract.Sources.SOURCE_NAME))
+                                .setId(id)
+                                .setTitle(DbUtils.getString(cursor, NewsContract.Sources.SOURCE_TITLE))
+                                .setName(DbUtils.getString(cursor, NewsContract.Sources.SOURCE_NAME))
                                 .setDescription(DbUtils.getString(cursor, NewsContract.Sources.SOURCE_DESCRIPTION))
                                 .setUrl(DbUtils.getString(cursor, NewsContract.Sources.SOURCE_URL))
                                 .setLanguage(DbUtils.getString(cursor, NewsContract.Sources.SOURCE_LANGUAGE))
@@ -66,26 +68,8 @@ public interface SourceMeta {
             return values;
         }
 
-        public Builder country(String country) {
-            values.put(NewsContract.Sources.SOURCE_NAME, country);
-
-            return this;
-        }
-
-        public Builder description(String description) {
-            values.put(NewsContract.Sources.SOURCE_DESCRIPTION, description);
-
-            return this;
-        }
-
         public Builder id(int id) {
             values.put(NewsContract.Sources.SOURCE_ID, id);
-
-            return this;
-        }
-
-        public Builder language(String language) {
-            values.put(NewsContract.Sources.SOURCE_LANGUAGE, language);
 
             return this;
         }
@@ -96,8 +80,32 @@ public interface SourceMeta {
             return this;
         }
 
+        public Builder title(String title) {
+            values.put(NewsContract.Sources.SOURCE_TITLE, title);
+
+            return this;
+        }
+
+        public Builder description(String description) {
+            values.put(NewsContract.Sources.SOURCE_DESCRIPTION, description);
+
+            return this;
+        }
+
         public Builder url(String url) {
             values.put(NewsContract.Sources.SOURCE_URL, url);
+
+            return this;
+        }
+
+        public Builder language(String language) {
+            values.put(NewsContract.Sources.SOURCE_LANGUAGE, language);
+
+            return this;
+        }
+
+        public Builder country(String country) {
+            values.put(NewsContract.Sources.SOURCE_COUNTRY, country);
 
             return this;
         }

@@ -46,10 +46,10 @@ public final class BrowseArticlesFragment extends ArticleFragment implements End
         reAddOnScrollListener(mGridLayoutManager, mCurrentPage);
     }
 
-    public static BrowseArticlesFragment newInstance(@NonNull String source) {
+    public static BrowseArticlesFragment newInstance(@NonNull String category) {
         Bundle args = new Bundle();
 
-        args.putString(Constants.Extra.SOURCE_ITEM, source);
+        args.putString(Constants.Extra.CATEGORY_ITEM, category);
 
         BrowseArticlesFragment fragment = new BrowseArticlesFragment();
 

@@ -37,9 +37,9 @@ public final class NewsDatabase extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE " + Tables.SOURCES + "(" + BaseColumns._ID + " INTEGER PRIMARY KEY,"
                     + SourcesColumns.SOURCE_ID + " INTEGER NOT NULL,"
                     + SourcesColumns.SOURCE_NAME + " TEXT NOT NULL,"
+                    + SourcesColumns.SOURCE_TITLE + " TEXT NOT NULL,"
                     + SourcesColumns.SOURCE_DESCRIPTION + " TEXT NOT NULL,"
                     + SourcesColumns.SOURCE_URL + " TEXT NOT NULL,"
-                    + SourcesColumns.SOURCE_CATEGORY + " TEXT NOT NULL,"
                     + SourcesColumns.SOURCE_LANGUAGE + " TEXT NOT NULL,"
                     + SourcesColumns.SOURCE_COUNTRY  + " TEXT NOT NULL,"
                 + "UNIQUE (" + SourcesColumns.SOURCE_ID + ") ON CONFLICT REPLACE)");

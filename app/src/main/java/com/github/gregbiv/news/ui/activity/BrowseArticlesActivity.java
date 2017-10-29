@@ -14,7 +14,9 @@ import com.github.gregbiv.news.BootstrapApplication;
 import com.github.gregbiv.news.R;
 import com.github.gregbiv.news.core.Constants;
 import com.github.gregbiv.news.core.model.Article;
+import com.github.gregbiv.news.core.model.Category;
 import com.github.gregbiv.news.core.model.Source;
+import com.github.gregbiv.news.core.repository.CategoryRepository;
 import com.github.gregbiv.news.core.repository.SourceRepository;
 import com.github.gregbiv.news.core.sync.NewsSyncAdapter;
 import com.github.gregbiv.news.ui.adapter.ModeSpinnerAdapter;
@@ -54,14 +56,14 @@ public final class BrowseArticlesActivity extends BaseActivity implements Articl
     private static final String MODE_FEED                 = "mode_feed";
     private static final String NEWS_FRAGMENT_TAG         = "fragment_articles";
     private static final String NEWS_DETAILS_FRAGMENT_TAG = "fragment_article_details";
-    private Subscription        mSourcesSubscription      = Subscriptions.empty();
+    private Subscription        mCategorysSubscription      = Subscriptions.empty();
     private ModeSpinnerAdapter  mSpinnerAdapter           = new ModeSpinnerAdapter(this);
     private ArticleFragment     mArticleFragment;
     private boolean             mTwoPane;
-    private String              mSource;
+    private String              mCategory;
     private int                 mSelected;
     @Inject
-    SourceRepository            mSourceRepository;
+    CategoryRepository          mCategoryRepository;
 
     private void initModeSpinner() {
         Toolbar toolbar = getToolbar();
@@ -72,7 +74,7 @@ public final class BrowseArticlesActivity extends BaseActivity implements Articl
 
         int itemToSelect = -1;
 
-        if (mSource.equals(MODE_FEED)) {
+        if (mCategory.equals(MODE_FEED)) {
             itemToSelect = 0;
         } else if (mSelected >= 0) {
 
@@ -113,11 +115,11 @@ public final class BrowseArticlesActivity extends BaseActivity implements Articl
     private void loadSources() {
 
         // Adding sources
-        mSourcesSubscription.unsubscribe();
-        mSourcesSubscription = mSourceRepository.sources()
+        mCategorysSubscription.unsubscribe();
+        mCategorysSubscription = mCategoryRepository.categories()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        sources -> {
+                        categories -> {
                             mSpinnerAdapter.clear();
                             mSpinnerAdapter.addItem(MODE_FEED,
                                     getString(R.string.mode_feeds),
@@ -126,17 +128,17 @@ public final class BrowseArticlesActivity extends BaseActivity implements Articl
                                     getString(R.string.menu_sources));
 
                             // Adding sources
-                            for (Source source : sources.values()) {
+                            for (Category category : categories.values()) {
                                 mSpinnerAdapter.addItem(
-                                        String.valueOf(source.getId()),
-                                        source.getTitle(),
+                                        String.valueOf(category.getId()),
+                                        category.getTitle(),
                                         false);
                             }
 
                             mSpinnerAdapter.notifyDataSetChanged();
                             initModeSpinner();
                         }, throwable -> {
-                            Timber.e(throwable, "Sources loading failed");
+                            Timber.e(throwable, "Category loading failed");
                         });
     }
 
@@ -149,10 +151,10 @@ public final class BrowseArticlesActivity extends BaseActivity implements Articl
         mTwoPane = findViewById(R.id.article_details_container) != null;
 
         if (savedInstanceState != null) {
-            mSource = savedInstanceState.getString(STATE_SOURCE, MODE_FEED);
+            mCategory = savedInstanceState.getString(STATE_SOURCE, MODE_FEED);
             mSelected = savedInstanceState.getInt(STATE_SELECTED, -1);
         } else {
-            mSource = PrefUtils.getBrowseNewsMode(this);
+            mCategory = PrefUtils.getBrowseNewsMode(this);
             mSelected = PrefUtils.getSelectedPosition(this);
         }
 
@@ -168,17 +170,17 @@ public final class BrowseArticlesActivity extends BaseActivity implements Articl
     }
 
     private void onModeSelected(String mode, int position) {
-        if (mode.equals(mSource)) {
+        if (mode.equals(mCategory)) {
             return;
         }
 
-        mSource = mode;
+        mCategory = mode;
         mSelected = position;
 
-        if (mSource.equals(MODE_FEED)) {
+        if (mCategory.equals(MODE_FEED)) {
             replaceArticleFragment(new ArticleSourceFragment());
         } else {
-            replaceArticleFragment(BrowseArticlesFragment.newInstance(mSource));
+            replaceArticleFragment(BrowseArticlesFragment.newInstance(mCategory));
         }
     }
 
@@ -217,7 +219,7 @@ public final class BrowseArticlesActivity extends BaseActivity implements Articl
 
     @Override
     protected void onPause() {
-        PrefUtils.setBrowseNewsMode(this, mSource);
+        PrefUtils.setBrowseNewsMode(this, mCategory);
         PrefUtils.setSelectedPosition(this, mSelected);
         super.onPause();
     }
@@ -228,9 +230,9 @@ public final class BrowseArticlesActivity extends BaseActivity implements Articl
         mArticleFragment = (ArticleFragment) getSupportFragmentManager().findFragmentByTag(NEWS_FRAGMENT_TAG);
 
         if (mArticleFragment == null) {
-            replaceArticleFragment(mSource.equals(MODE_FEED)
+            replaceArticleFragment(mCategory.equals(MODE_FEED)
                     ? new ArticleSourceFragment()
-                    : BrowseArticlesFragment.newInstance(mSource));
+                    : BrowseArticlesFragment.newInstance(mCategory));
         }
     }
 
@@ -238,7 +240,7 @@ public final class BrowseArticlesActivity extends BaseActivity implements Articl
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(STATE_SELECTED, mSelected);
-        outState.putString(STATE_SOURCE, mSource);
+        outState.putString(STATE_SOURCE, mCategory);
     }
 
     private void replaceNewsDetailsFragment(ArticleDetailsFragment fragment) {

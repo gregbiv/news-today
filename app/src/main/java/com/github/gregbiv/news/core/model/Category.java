@@ -84,7 +84,7 @@ public class Category implements Serializable, Parcelable, CategoryMeta {
 
     public static final class Response {
         @Expose
-        public List<Category> categories = new ArrayList<>();
-        public String         status;
+        public List<Category> result = new ArrayList<>();
+        public String         response;
     }
 }

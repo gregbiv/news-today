@@ -93,6 +93,7 @@ public final class NewsProvider extends ContentProvider {
         final String     authority = CONTENT_AUTHORITY;
 
         matcher.addURI(authority, "sources", SOURCES);
+        matcher.addURI(authority, "categories", CATEGORIES);
 
         return matcher;
     }

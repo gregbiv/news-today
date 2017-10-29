@@ -33,6 +33,8 @@ public class Source implements Serializable, Parcelable, SourceMeta {
     @Expose
     private int    id;
     @Expose
+    private String name;
+    @Expose
     private String title;
     @Expose
     private String description;
@@ -47,6 +49,7 @@ public class Source implements Serializable, Parcelable, SourceMeta {
 
     protected Source(Parcel in) {
         this.id          = in.readInt();
+        this.name        = in.readString();
         this.title       = in.readString();
         this.description = in.readString();
         this.url         = in.readString();
@@ -62,6 +65,7 @@ public class Source implements Serializable, Parcelable, SourceMeta {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(this.id);
+        dest.writeString(this.name);
         dest.writeString(this.title);
         dest.writeString(this.description);
         dest.writeString(this.url);
@@ -84,6 +88,15 @@ public class Source implements Serializable, Parcelable, SourceMeta {
 
     public Source setTitle(String title) {
         this.title = title;
+        return this;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Source setName(String name) {
+        this.name = name;
         return this;
     }
 
@@ -125,7 +138,7 @@ public class Source implements Serializable, Parcelable, SourceMeta {
 
     public static final class Response {
         @Expose
-        public List<Source> sources = new ArrayList<>();
-        public String       status;
+        public List<Source> result = new ArrayList<>();
+        public String       response;
     }
 }
