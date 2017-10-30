@@ -33,6 +33,7 @@ public interface SourceMeta {
             NewsContract.Sources.SOURCE_URL,
             NewsContract.Sources.SOURCE_LANGUAGE,
             NewsContract.Sources.SOURCE_COUNTRY,
+            NewsContract.Sources.SOURCE_CATEGORY,
     };
     Func1<SqlBrite.Query, Map<Integer, Source>> PROJECTION_MAP = query -> {
         Cursor cursor = query.run();
@@ -52,7 +53,9 @@ public interface SourceMeta {
                                 .setDescription(DbUtils.getString(cursor, NewsContract.Sources.SOURCE_DESCRIPTION))
                                 .setUrl(DbUtils.getString(cursor, NewsContract.Sources.SOURCE_URL))
                                 .setLanguage(DbUtils.getString(cursor, NewsContract.Sources.SOURCE_LANGUAGE))
-                                .setCountry(DbUtils.getString(cursor, NewsContract.Sources.SOURCE_COUNTRY)));
+                                .setCountry(DbUtils.getString(cursor, NewsContract.Sources.SOURCE_COUNTRY))
+                                .setCategory(DbUtils.getInt(cursor, NewsContract.Sources.SOURCE_CATEGORY))
+                );
             }
 
             return values;
@@ -106,6 +109,12 @@ public interface SourceMeta {
 
         public Builder country(String country) {
             values.put(NewsContract.Sources.SOURCE_COUNTRY, country);
+
+            return this;
+        }
+
+        public Builder category(int category) {
+            values.put(NewsContract.Sources.SOURCE_CATEGORY, category);
 
             return this;
         }

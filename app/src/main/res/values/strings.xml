@@ -39,4 +39,10 @@
     <string name="title_share_trailer">Share trailer</string>
     <string name="message_article_favored">Saved to favorites.</string>
     <string name="sync_account_type">com.github.gregbiv.news</string>
+
+    <!-- TODO REMOVE THIS -->
+    <string name="category_1">General news</string>
+    <string name="category_2">Deutschland</string>
+    <string name="category_3">Politics</string>
+    <string name="category_4">Music</string>
 </resources>

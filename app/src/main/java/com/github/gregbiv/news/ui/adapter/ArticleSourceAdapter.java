@@ -30,13 +30,18 @@ import android.widget.TextView;
 import ca.barrenechea.widget.recyclerview.decoration.StickyHeaderAdapter;
 
 public class ArticleSourceAdapter extends ArticleAdapter implements StickyHeaderAdapter<ArticleSourceAdapter.HeaderHolder> {
-    private Map<String, String>  titleMap    = new HashMap<>();
-    private Map<String, Integer> positionMap = new HashMap<>();
+    private Map<Integer, String>  titleMap    = new HashMap<>();
+    private Map<Integer, Integer> positionMap = new HashMap<>();
 
     public ArticleSourceAdapter(@NonNull Fragment fragment, List<Article> articles) {
         super(fragment, articles);
 
         // TODO sources
+        titleMap.put(1, fragment.getString(R.string.category_1));
+        titleMap.put(2, fragment.getString(R.string.category_2));
+        titleMap.put(3, fragment.getString(R.string.category_3));
+        titleMap.put(4, fragment.getString(R.string.category_4));
+
         sortItems(articles);
     }
 
@@ -55,7 +60,7 @@ public class ArticleSourceAdapter extends ArticleAdapter implements StickyHeader
 
     @Override
     public void onBindHeaderViewHolder(HeaderHolder viewHolder, int position) {
-        viewHolder.header.setText(titleMap.get(mItems.get(position).getSource().getTitle()));
+        viewHolder.header.setText(titleMap.get(mItems.get(position).getSourceId()));
     }
 
     @Override
@@ -73,17 +78,17 @@ public class ArticleSourceAdapter extends ArticleAdapter implements StickyHeader
         int i = 0;
 
         // preparing each container
-        for (String categoryId : titleMap.keySet()) {
+        for (int categoryId : titleMap.keySet()) {
             List<Article> articlesList = new ArrayList<>();
 
             // do sort
             for (Article item : newItems) {
-                if (categoryId.equals(item.getCategory())) {
+                if (categoryId == item.getSource().getCategory()) {
                     articlesList.add(item);
                 }
             }
 
-            positionMap.put(categoryId, (i == 0) ? 0 : amount + articlesList.size());
+            positionMap.put(categoryId, i == 0 ? 0 : amount + articlesList.size());
             i++;
         }
 
@@ -92,13 +97,13 @@ public class ArticleSourceAdapter extends ArticleAdapter implements StickyHeader
 
     @Override
     public long getHeaderId(int position) {
-        return positionMap.get(mItems.get(position).getCategory());
+        return positionMap.get(mItems.get(position).getSource().getCategory());
     }
 
     public class SourceCategoryComparator implements Comparator<Article> {
         @Override
         public int compare(Article lhs, Article rhs) {
-            if ((null != lhs.getSource()) && (null != rhs.getSource())  && (lhs.getSource().getId() == rhs.getSource().getId())) {
+            if (null != lhs.getSource() && null != rhs.getSource() && lhs.getSource().getCategory() == rhs.getSource().getCategory()) {
                 if (lhs.getSourceId() > rhs.getSourceId()) {
                     return 1;
                 }
@@ -110,7 +115,7 @@ public class ArticleSourceAdapter extends ArticleAdapter implements StickyHeader
                 return 0;
             }
 
-            if ((null != lhs.getSource())  && (null != rhs.getSource()) && (lhs.getSource().getId() > rhs.getSource().getId())) {
+            if (null != lhs.getSource() && null != rhs.getSource() && lhs.getSource().getCategory() > rhs.getSource().getCategory()) {
                 return 1;
             }
 

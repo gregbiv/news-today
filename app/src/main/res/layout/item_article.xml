@@ -4,7 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/item_spacing_half"
     android:layout_marginTop="@dimen/item_spacing_half"
     tools:layout_margin="@dimen/item_spacing_full">

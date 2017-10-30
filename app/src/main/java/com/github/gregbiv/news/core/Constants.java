@@ -43,6 +43,7 @@ public final class Constants {
 
 
     public static final class Extra {
+        public static final String SPINNER_ITEMS  = "spinner_items";
         public static final String ARTICLE_ITEMS = "article_items";
         public static final String ARTICLE_ITEM  = "article_item";
         public static final String CATEGORY_ITEM = "category_item";
@@ -92,6 +93,7 @@ public final class Constants {
         public static final String SCROLL_VIEW       = "scroll_view";
         public static final String CURRENT_PAGE      = "current_page";
         public static final String SELECTED_POSITION = "selected_position";
+        public static final String SELECTED_CATEGORY = "selected_category";
 
         private Intent() {}
     }

@@ -42,6 +42,7 @@ public final class NewsDatabase extends SQLiteOpenHelper {
                     + SourcesColumns.SOURCE_URL + " TEXT NOT NULL,"
                     + SourcesColumns.SOURCE_LANGUAGE + " TEXT NOT NULL,"
                     + SourcesColumns.SOURCE_COUNTRY  + " TEXT NOT NULL,"
+                    + SourcesColumns.SOURCE_CATEGORY + " INTEGER NOT NULL,"
                 + "UNIQUE (" + SourcesColumns.SOURCE_ID + ") ON CONFLICT REPLACE)");
 
         // Categories

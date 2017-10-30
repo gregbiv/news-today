@@ -8,6 +8,9 @@
  */
 package com.github.gregbiv.news.ui.activity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import com.github.gregbiv.news.BootstrapApplication;
@@ -15,9 +18,8 @@ import com.github.gregbiv.news.R;
 import com.github.gregbiv.news.core.Constants;
 import com.github.gregbiv.news.core.model.Article;
 import com.github.gregbiv.news.core.model.Category;
-import com.github.gregbiv.news.core.model.Source;
+import com.github.gregbiv.news.core.model.SpinnerItem;
 import com.github.gregbiv.news.core.repository.CategoryRepository;
-import com.github.gregbiv.news.core.repository.SourceRepository;
 import com.github.gregbiv.news.core.sync.NewsSyncAdapter;
 import com.github.gregbiv.news.ui.adapter.ModeSpinnerAdapter;
 import com.github.gregbiv.news.ui.fragment.ArticleDetailsFragment;
@@ -42,28 +44,31 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Spinner;
 
+import rx.Observable;
 import rx.Subscription;
 
 import rx.android.schedulers.AndroidSchedulers;
+
+import rx.subjects.BehaviorSubject;
 
 import rx.subscriptions.Subscriptions;
 
 import timber.log.Timber;
 
 public final class BrowseArticlesActivity extends BaseActivity implements ArticleFragment.Listener {
-    private static final String STATE_SOURCE              = "state_source";
-    private static final String STATE_SELECTED            = "state_selected";
-    private static final String MODE_FEED                 = "mode_feed";
-    private static final String NEWS_FRAGMENT_TAG         = "fragment_articles";
-    private static final String NEWS_DETAILS_FRAGMENT_TAG = "fragment_article_details";
-    private Subscription        mCategorysSubscription      = Subscriptions.empty();
-    private ModeSpinnerAdapter  mSpinnerAdapter           = new ModeSpinnerAdapter(this);
+    private static final String MODE_FEED                    = "mode_feed";
+    private static final String ARTICLE_FRAGMENT_TAG         = "fragment_article";
+    private static final String ARTICLE_DETAILS_FRAGMENT_TAG = "fragment_article_details";
+    private BehaviorSubject<Observable<List<Category>>>
+                                mItemsObservableSubject      = BehaviorSubject.create();
+    private ModeSpinnerAdapter  mSpinnerAdapter              = new ModeSpinnerAdapter(this, new ArrayList<>());
+    private Subscription        mCategoriesSubscription      = Subscriptions.empty();
     private ArticleFragment     mArticleFragment;
     private boolean             mTwoPane;
     private String              mCategory;
     private int                 mSelected;
     @Inject
-    CategoryRepository          mCategoryRepository;
+    CategoryRepository mCategoryRepository;
 
     private void initModeSpinner() {
         Toolbar toolbar = getToolbar();
@@ -112,34 +117,33 @@ public final class BrowseArticlesActivity extends BaseActivity implements Articl
         }
     }
 
-    private void loadSources() {
+    private void loadCategories() {
+        Timber.d("Categories is loading.");
+        mItemsObservableSubject.onNext(mCategoryRepository.categories().map(categoryMap -> {
+            List<Category> categoryList = new ArrayList<Category>();
 
-        // Adding sources
-        mCategorysSubscription.unsubscribe();
-        mCategorysSubscription = mCategoryRepository.categories()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        categories -> {
-                            mSpinnerAdapter.clear();
-                            mSpinnerAdapter.addItem(MODE_FEED,
-                                    getString(R.string.mode_feeds),
-                                    false);
-                            mSpinnerAdapter.addHeader(
-                                    getString(R.string.menu_sources));
+            for (Category category : categoryMap.values()) {
+                categoryList.add(category);
+            }
 
-                            // Adding sources
-                            for (Category category : categories.values()) {
-                                mSpinnerAdapter.addItem(
-                                        String.valueOf(category.getId()),
-                                        category.getTitle(),
-                                        false);
-                            }
+            return categoryList;
+        }));
+    }
 
-                            mSpinnerAdapter.notifyDataSetChanged();
-                            initModeSpinner();
-                        }, throwable -> {
-                            Timber.e(throwable, "Category loading failed");
-                        });
+    @Override
+    public void onNewsSelected(Article news, View view) {
+        Timber.d(String.format("Article '%s' selected", news.getTitle()));
+
+        if (mTwoPane) {
+            ArticleDetailsFragment fragment = ArticleDetailsFragment.newInstance(news);
+
+            replaceArticleDetailsFragment(fragment);
+        } else {
+            Intent intent = new Intent(this, ArticleDetailsActivity.class);
+
+            intent.putExtra(Constants.Extra.ARTICLE_ITEM, news);
+            startActivity(intent);
+        }
     }
 
     @Override
@@ -151,14 +155,20 @@ public final class BrowseArticlesActivity extends BaseActivity implements Articl
         mTwoPane = findViewById(R.id.article_details_container) != null;
 
         if (savedInstanceState != null) {
-            mCategory = savedInstanceState.getString(STATE_SOURCE, MODE_FEED);
-            mSelected = savedInstanceState.getInt(STATE_SELECTED, -1);
+            mCategory = savedInstanceState.getString(Constants.Intent.SELECTED_CATEGORY, mCategory);
+            mSelected = savedInstanceState.getInt(Constants.Intent.SELECTED_POSITION, -1);
+
+            ArrayList<SpinnerItem> restoredItems =
+                    savedInstanceState.getParcelableArrayList(Constants.Extra.SPINNER_ITEMS);
+
+            mSpinnerAdapter = new ModeSpinnerAdapter(this, restoredItems);
+            initModeSpinner();
         } else {
             mCategory = PrefUtils.getBrowseNewsMode(this);
             mSelected = PrefUtils.getSelectedPosition(this);
         }
 
-        loadSources();
+        subscribeToCategories();
     }
 
     @Override
@@ -181,22 +191,6 @@ public final class BrowseArticlesActivity extends BaseActivity implements Articl
             replaceArticleFragment(new ArticleSourceFragment());
         } else {
             replaceArticleFragment(BrowseArticlesFragment.newInstance(mCategory));
-        }
-    }
-
-    @Override
-    public void onNewsSelected(Article article, View view) {
-        Timber.d(String.format("Article '%s' selected", article.getTitle()));
-
-        if (mTwoPane) {
-            ArticleDetailsFragment fragment = ArticleDetailsFragment.newInstance(article);
-
-            replaceNewsDetailsFragment(fragment);
-        } else {
-            Intent intent = new Intent(this, ArticleDetailsActivity.class);
-
-            intent.putExtra(Constants.Extra.ARTICLE_ITEM, article);
-            startActivity(intent);
         }
     }
 
@@ -227,25 +221,30 @@ public final class BrowseArticlesActivity extends BaseActivity implements Articl
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        mArticleFragment = (ArticleFragment) getSupportFragmentManager().findFragmentByTag(NEWS_FRAGMENT_TAG);
+        mArticleFragment = (ArticleFragment) getSupportFragmentManager().findFragmentByTag(ARTICLE_FRAGMENT_TAG);
 
         if (mArticleFragment == null) {
             replaceArticleFragment(mCategory.equals(MODE_FEED)
                     ? new ArticleSourceFragment()
                     : BrowseArticlesFragment.newInstance(mCategory));
         }
+
+        if (savedInstanceState == null) {
+            loadCategories();
+        }
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(STATE_SELECTED, mSelected);
-        outState.putString(STATE_SOURCE, mCategory);
+        outState.putParcelableArrayList(Constants.Extra.SPINNER_ITEMS, new ArrayList<>(mSpinnerAdapter.getItems()));
+        outState.putInt(Constants.Intent.SELECTED_POSITION, mSelected);
+        outState.putString(Constants.Intent.SELECTED_CATEGORY, mCategory);
     }
 
-    private void replaceNewsDetailsFragment(ArticleDetailsFragment fragment) {
+    private void replaceArticleDetailsFragment(ArticleDetailsFragment fragment) {
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.article_details_container, fragment, NEWS_DETAILS_FRAGMENT_TAG)
+                .replace(R.id.article_details_container, fragment, ARTICLE_DETAILS_FRAGMENT_TAG)
                 .setCustomAnimations(R.anim.slide_in_right,
                         R.anim.slide_out_left,
                         R.anim.slide_in_left,
@@ -256,11 +255,41 @@ public final class BrowseArticlesActivity extends BaseActivity implements Articl
     private void replaceArticleFragment(ArticleFragment fragment) {
         mArticleFragment = fragment;
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.article_container, fragment, NEWS_FRAGMENT_TAG)
+                .replace(R.id.article_container, fragment, ARTICLE_FRAGMENT_TAG)
                 .setCustomAnimations(R.anim.slide_in_right,
                         R.anim.slide_out_left,
                         R.anim.slide_in_left,
                         R.anim.slide_out_right)
                 .commit();
+    }
+
+    private final void subscribeToCategories() {
+        Timber.d("Subscribing to categories");
+
+        // Adding categories
+        mCategoriesSubscription.unsubscribe();
+        mCategoriesSubscription = mCategoryRepository.categories()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        categories -> {
+                            mSpinnerAdapter.clear();
+                            mSpinnerAdapter.addItem(MODE_FEED,
+                                    getString(R.string.mode_feeds),
+                                    false);
+                            mSpinnerAdapter.addHeader(
+                                    getString(R.string.menu_categories));
+
+                            for (Category category : categories.values()) {
+                                mSpinnerAdapter.addItem(
+                                        String.valueOf(category.getId()),
+                                        category.getTitle(),
+                                        false);
+                            }
+
+                            mSpinnerAdapter.notifyDataSetChanged();
+                            initModeSpinner();
+                        }, throwable -> {
+                            Timber.e(throwable, "Categories loading failed");
+                        });
     }
 }

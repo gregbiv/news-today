@@ -44,6 +44,8 @@ public class Source implements Serializable, Parcelable, SourceMeta {
     private String language;
     @Expose
     private String country;
+    @Expose
+    private int    category;
 
     public Source() {}
 
@@ -55,6 +57,7 @@ public class Source implements Serializable, Parcelable, SourceMeta {
         this.url         = in.readString();
         this.language    = in.readString();
         this.country     = in.readString();
+        this.category    = in.readInt();
     }
 
     @Override
@@ -71,6 +74,7 @@ public class Source implements Serializable, Parcelable, SourceMeta {
         dest.writeString(this.url);
         dest.writeString(this.language);
         dest.writeString(this.country);
+        dest.writeInt(this.category);
     }
 
     public int getId() {
@@ -133,6 +137,16 @@ public class Source implements Serializable, Parcelable, SourceMeta {
 
     public Source setCountry(String country) {
         this.country = country;
+        return this;
+    }
+
+    public int getCategory() {
+        return category;
+    }
+
+    public Source setCategory(int category) {
+        this.category = category;
+
         return this;
     }
 

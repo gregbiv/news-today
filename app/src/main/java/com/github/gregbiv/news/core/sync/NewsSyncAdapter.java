@@ -18,6 +18,9 @@ import com.github.gregbiv.news.core.api.NewsApi;
 import com.github.gregbiv.news.core.model.Category;
 import com.github.gregbiv.news.core.model.Source;
 import com.github.gregbiv.news.core.provider.NewsContract;
+import com.github.gregbiv.news.core.provider.NewsDatabase;
+import com.squareup.sqlbrite.BriteDatabase;
+import com.squareup.sqlbrite.BriteDatabase.Transaction;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -35,11 +38,14 @@ import android.os.Bundle;
 import timber.log.Timber;
 
 public class NewsSyncAdapter extends AbstractThreadedSyncAdapter {
+    public static final String STATE_PERIODIC = "state_periodic";
     public static final int SYNC_INTERVAL = 60 * 180;
     public static final int SYNC_FLEXTIME = SYNC_INTERVAL / 3;
     private final Context mContext;
     @Inject
-    NewsApi mNewsApi;
+    NewsApi                 mNewsApi;
+    @Inject
+    BriteDatabase           mDatabase;
 
     public NewsSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
@@ -51,20 +57,24 @@ public class NewsSyncAdapter extends AbstractThreadedSyncAdapter {
      * Helper method to schedule the sync adapter periodic execution
      */
     public static void configurePeriodicSync(Context context, int syncInterval, int flexTime) {
-        Account account = getSyncAccount(context);
-        String authority = NewsContract.CONTENT_AUTHORITY;
+        Account account   = getSyncAccount(context);
+        String  authority = NewsContract.CONTENT_AUTHORITY;
+        Bundle  extras    = new Bundle();
+
+        extras.putBoolean(STATE_PERIODIC, true);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 
             // we can enable inexact timers in our periodic sync
-            SyncRequest request = new SyncRequest.Builder().syncPeriodic(syncInterval, flexTime)
-                    .setExtras(Bundle.EMPTY)
+            SyncRequest request = new SyncRequest.Builder().
+                    syncPeriodic(syncInterval, flexTime)
+                    .setExtras(extras)
                     .setSyncAdapter(account, authority)
                     .build();
 
             ContentResolver.requestSync(request);
         } else {
-            ContentResolver.addPeriodicSync(account, authority, new Bundle(), syncInterval);
+            ContentResolver.addPeriodicSync(account, authority, extras, syncInterval);
         }
     }
 
@@ -83,19 +93,19 @@ public class NewsSyncAdapter extends AbstractThreadedSyncAdapter {
          * Without calling setSyncAutomatically, our periodic sync will not be enabled.
          */
         ContentResolver.setSyncAutomatically(newAccount, NewsContract.CONTENT_AUTHORITY, true);
-
-        /*
-         * In some devices we should do first manual sync
-         */
-        syncImmediately(context);
     }
 
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider,
                               SyncResult syncResult) {
         Timber.d("onPerformSync Called.");
-        syncSources();
-        syncCategories();
+
+        if (extras.getBoolean(STATE_PERIODIC)) {
+            Timber.d("Periodic sync Called.");
+
+            syncSources();
+            syncCategories();
+        }
     }
 
     /**
@@ -118,27 +128,29 @@ public class NewsSyncAdapter extends AbstractThreadedSyncAdapter {
         mNewsApi.sources()
                 .timeout(5, TimeUnit.SECONDS)
                 .retry(2)
-                .subscribe(
-                        response -> {
-                            for (Source source : response.result) {
-                                Timber.d("Sync sources: " + response.result.size());
+                .subscribe(response -> {
+                    Transaction transaction = mDatabase.newTransaction();
 
-                                mContext.getContentResolver()
-                                        .insert(NewsContract.Sources.buildSourcesUri(),
-                                                new Source.Builder()
-                                                        .id(source.getId())
-                                                        .name(source.getName())
-                                                        .title(source.getTitle())
-                                                        .description(source.getDescription())
-                                                        .url(source.getUrl())
-                                                        .language(source.getLanguage())
-                                                        .country(source.getCountry())
-                                                        .build());
-                            }
-                        },
-                        throwable -> {
-                            Timber.e(throwable, "Sync sources failed");
-                        });
+                    try {
+                        for (Source source : response.result) {
+                            mDatabase.insert(NewsDatabase.Tables.SOURCES, new Source.Builder()
+                                    .id(source.getId())
+                                    .name(source.getName())
+                                    .title(source.getTitle())
+                                    .description(source.getDescription())
+                                    .url(source.getUrl())
+                                    .language(source.getLanguage())
+                                    .country(source.getCountry())
+                                    .category(source.getCategory())
+                                    .build());
+                        }
+                        transaction.markSuccessful();
+                    } finally {
+                        transaction.end();
+                    }
+                }, throwable -> {
+                    Timber.e(throwable, "Sync sources failed");
+                });
     }
 
     /**
@@ -148,23 +160,24 @@ public class NewsSyncAdapter extends AbstractThreadedSyncAdapter {
         mNewsApi.categories()
                 .timeout(5, TimeUnit.SECONDS)
                 .retry(2)
-                .subscribe(
-                        response -> {
-                            for (Category category : response.result) {
-                                Timber.d("Sync categories: " + response.result.size());
+                .subscribe(categories -> {
+                    Transaction transaction = mDatabase.newTransaction();
 
-                                mContext.getContentResolver()
-                                        .insert(NewsContract.Categories.buildCategoriesUri(),
-                                                new Category.Builder()
-                                                        .id(category.getId())
-                                                        .name(category.getName())
-                                                        .title(category.getTitle())
-                                                        .build());
-                            }
-                        },
-                        throwable -> {
-                            Timber.e(throwable, "Sync categories failed");
-                        });
+                    try {
+                        for (Category category : categories.result) {
+                            mDatabase.insert(NewsDatabase.Tables.CATEGORIES, new Category.Builder()
+                                    .id(category.getId())
+                                    .title(category.getTitle())
+                                    .name(category.getName())
+                                    .build());
+                        }
+                        transaction.markSuccessful();
+                    } finally {
+                        transaction.end();
+                    }
+                }, throwable -> {
+                    Timber.e(throwable, "Sync categories failed");
+                });
     }
 
     /**

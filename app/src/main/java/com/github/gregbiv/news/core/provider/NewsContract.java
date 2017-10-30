@@ -34,6 +34,7 @@ public final class NewsContract {
         String SOURCE_URL         = "source_url";
         String SOURCE_LANGUAGE    = "source_language";
         String SOURCE_COUNTRY     = "source_country";
+        String SOURCE_CATEGORY    = "source_category";
     }
 
     public interface CategoriesColumns {

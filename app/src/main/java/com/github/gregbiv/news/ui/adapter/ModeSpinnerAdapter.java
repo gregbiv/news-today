@@ -11,8 +11,11 @@ package com.github.gregbiv.news.ui.adapter;
 import java.util.ArrayList;
 
 import com.github.gregbiv.news.R;
+import com.github.gregbiv.news.core.model.SpinnerItem;
 
 import android.app.Activity;
+
+import android.support.annotation.NonNull;
 
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,19 +24,22 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 public class ModeSpinnerAdapter extends BaseAdapter {
-    private ArrayList<ModeSpinnerItem> mItems = new ArrayList<ModeSpinnerItem>();
-    Activity                           mContext;
+    private ArrayList<SpinnerItem> mItems;
+    Activity                       mContext;
 
-    public ModeSpinnerAdapter(Activity context) {
+    public ModeSpinnerAdapter(Activity context, ArrayList<SpinnerItem> items) {
+        mItems   = (items == null)
+                   ? new ArrayList<>()
+                   : items;
         mContext = context;
     }
 
     public void addHeader(String title) {
-        mItems.add(new ModeSpinnerItem(true, "", title, false));
+        mItems.add(new SpinnerItem(true, "", title, false));
     }
 
     public void addItem(String tag, String title, boolean indented) {
-        mItems.add(new ModeSpinnerItem(false, tag, title, indented));
+        mItems.add(new SpinnerItem(false, tag, title, indented));
     }
 
     @Override
@@ -82,7 +88,7 @@ public class ModeSpinnerAdapter extends BaseAdapter {
     }
 
     private boolean isHeader(int position) {
-        return (position >= 0) && (position < mItems.size()) && mItems.get(position).isHeader;
+        return (position >= 0) && (position < mItems.size()) && mItems.get(position).isHeader();
     }
 
     @Override
@@ -100,15 +106,20 @@ public class ModeSpinnerAdapter extends BaseAdapter {
         return 0;
     }
 
+    @NonNull
+    public ArrayList<SpinnerItem> getItems() {
+        return mItems;
+    }
+
     public String getMode(int position) {
         return ((position >= 0) && (position < mItems.size()))
-               ? mItems.get(position).mode
+               ? mItems.get(position).getMode()
                : "";
     }
 
     private String getTitle(int position) {
         return ((position >= 0) && (position < mItems.size()))
-               ? mItems.get(position).title
+               ? mItems.get(position).getTitle()
                : "";
     }
 
@@ -133,18 +144,5 @@ public class ModeSpinnerAdapter extends BaseAdapter {
     @Override
     public int getViewTypeCount() {
         return 1;
-    }
-
-    private class ModeSpinnerItem {
-        boolean isHeader;
-        String  mode, title;
-        boolean indented;
-
-        ModeSpinnerItem(boolean isHeader, String mode, String title, boolean indented) {
-            this.isHeader = isHeader;
-            this.mode     = mode;
-            this.title    = title;
-            this.indented = indented;
-        }
     }
 }

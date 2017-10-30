@@ -25,10 +25,13 @@ public interface BootstrapComponent {
 
     void inject(BrowseNewsActivity target);
 
+    void inject(NewsFragment target);
+
     void inject(BrowseNewsFragment target);
 
-    void inject(NewsFragment target);
+    void inject(NewsDetailsFragment target);
+
+    void inject(BaseActivity target);
 
     void inject(NewsSyncAdapter target);
 }
-

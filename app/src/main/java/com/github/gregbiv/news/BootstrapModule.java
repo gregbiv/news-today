@@ -160,14 +160,14 @@ public class BootstrapModule {
 
     @Singleton
     @Provides
-    SourceRepository providesSourceRepository(BriteContentResolver briteContentResolver) {
-        return new SourceRepositoryImpl(briteContentResolver);
+    SourceRepository providesSourceRepository(BriteContentResolver briteContentResolver, BriteDatabase briteDatabase, NewsApi newsApi) {
+        return new SourceRepositoryImpl(briteContentResolver, briteDatabase, newsApi);
     }
 
     @Singleton
     @Provides
-    CategoryRepository providesCategoryRepository(BriteContentResolver briteContentResolver) {
-        return new CategoryRepositoryImpl(briteContentResolver);
+    CategoryRepository providesCategoryRepository(BriteContentResolver briteContentResolver, BriteDatabase briteDatabase, NewsApi newsApi) {
+        return new CategoryRepositoryImpl(briteContentResolver, briteDatabase, newsApi);
     }
 
     @Singleton

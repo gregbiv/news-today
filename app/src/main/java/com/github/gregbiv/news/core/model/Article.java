@@ -27,7 +27,7 @@ public class Article implements Parcelable {
         }
     };
     @Expose
-    private Integer  id;
+    private int      id;
     @Expose
     private String   author;
     @Expose
@@ -45,7 +45,7 @@ public class Article implements Parcelable {
     private int      categoryId;
     private Category category;
     @Expose
-    @SerializedName("feed")
+    @SerializedName("source")
     private int      sourceId;
     private Source   source;
 
@@ -70,6 +70,7 @@ public class Article implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.id);
         dest.writeString(this.author);
         dest.writeString(this.title);
         dest.writeString(this.description);
@@ -191,10 +192,12 @@ public class Article implements Parcelable {
     }
 
     public static final class Response {
-        public List<Article> articles = new ArrayList<>();
         @Expose
-        public String        status;
-        public String        source;
-        public String        sortBy;
+        public List<Article>      articles = new ArrayList<>();
+        public int                limit;
+        public int                offset;
+        public int                nbTotal;
+        public ArrayList<Integer> ids;
+        public String             status;
     }
 }
