@@ -13,6 +13,9 @@ import java.util.List;
 
 import com.bumptech.glide.Glide;
 
+import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
 import com.github.gregbiv.news.R;
 import com.github.gregbiv.news.core.model.Article;
 import com.github.gregbiv.news.util.StringUtils;
@@ -108,8 +111,11 @@ public class ArticleAdapter extends EndlessAdapter<Article, ArticleAdapter.Artic
             if (article.getUrlToImage() != null) {
                 Glide.with(mFragment)
                         .load(article.getUrlToImage())
-                        .crossFade()
-                        .placeholder(R.color.article_illustration_placeholder)
+
+                        .apply(RequestOptions.centerCropTransform()
+                                .placeholder(R.color.article_illustration_placeholder)
+                                .priority(Priority.HIGH))
+                        .transition(DrawableTransitionOptions.withCrossFade(300))
                         .into(mImageView);
                 mImageView.setVisibility(View.VISIBLE);
             }

@@ -56,6 +56,8 @@ import retrofit.client.OkClient;
 
 import retrofit.converter.GsonConverter;
 
+import rx.Scheduler;
+import rx.android.schedulers.AndroidSchedulers;
 import timber.log.Timber;
 
 /**
@@ -66,8 +68,8 @@ import timber.log.Timber;
 public class BootstrapModule {
     @Provides
     @Singleton
-    BriteContentResolver provideBriteContentResolver(SqlBrite sqlBrite, ContentResolver contentResolver) {
-        return sqlBrite.wrapContentProvider(contentResolver);
+    BriteContentResolver provideBriteContentResolver(SqlBrite sqlBrite, ContentResolver contentResolver, Scheduler scheduler) {
+        return sqlBrite.wrapContentProvider(contentResolver, scheduler);
     }
 
     @Provides
@@ -118,6 +120,11 @@ public class BootstrapModule {
         return client;
     }
 
+    @Provides
+    public Scheduler provideSubscriptionScheduler() {
+        return AndroidSchedulers.mainThread();
+    }
+
     @Singleton
     @Provides
     Bus provideOttoBus() {
@@ -126,8 +133,7 @@ public class BootstrapModule {
 
     @Provides
     @Singleton
-    RestAdapter provideRestAdapter(OkHttpClient client, Gson gson,
-                                   RestAdapterRequestInterceptor restRequestInterceptor) {
+    RestAdapter provideRestAdapter(OkHttpClient client, Gson gson, RestAdapterRequestInterceptor restRequestInterceptor) {
         return new RestAdapter.Builder().setClient(new OkClient(client))
                                         .setEndpoint(Constants.Http.URL_BASE)
                                         .setLogLevel(RestAdapter.LogLevel.BASIC)
@@ -154,8 +160,8 @@ public class BootstrapModule {
 
     @Provides
     @Singleton
-    BriteDatabase providerBriteDatabase(SqlBrite sqlBrite, Context context) {
-        return sqlBrite.wrapDatabaseHelper(new NewsDatabase(context));
+    BriteDatabase providerBriteDatabase(SqlBrite sqlBrite, Context context, Scheduler scheduler) {
+        return sqlBrite.wrapDatabaseHelper(new NewsDatabase(context), scheduler);
     }
 
     @Singleton

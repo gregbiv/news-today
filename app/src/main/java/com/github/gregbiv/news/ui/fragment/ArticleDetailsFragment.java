@@ -3,7 +3,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @author  Gregory Kornienko <gregbiv@gmail.com>
+ * @author Gregory Kornienko <gregbiv@gmail.com>
  * @license MIT
  */
 package com.github.gregbiv.news.ui.fragment;
@@ -15,6 +15,9 @@ import javax.inject.Inject;
 
 import com.bumptech.glide.Glide;
 
+import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
 import com.github.gregbiv.news.BootstrapApplication;
 import com.github.gregbiv.news.R;
 import com.github.gregbiv.news.core.Constants;
@@ -67,46 +70,46 @@ import timber.log.Timber;
 
 public final class ArticleDetailsFragment extends BaseFragment
         implements SwipeRefreshLayout.OnRefreshListener, MultiSwipeRefreshLayout.CanChildScrollUpCallback,
-                   ObservableScrollViewCallbacks {
-    protected static final int                   ANIMATOR_VIEW_LOADING   = R.id.view_loading;
-    protected static final int                   ANIMATOR_VIEW_CONTENT   = R.id.article_scroll_view;
-    protected static final int                   ANIMATOR_VIEW_ERROR     = R.id.view_error;
-    protected static final int                   ANIMATOR_VIEW_EMPTY     = R.id.view_empty;
-    private List<Runnable>                       mDeferredUiOperations   = new ArrayList<>();
+        ObservableScrollViewCallbacks {
+    protected static final int ANIMATOR_VIEW_LOADING = R.id.view_loading;
+    protected static final int ANIMATOR_VIEW_CONTENT = R.id.article_scroll_view;
+    protected static final int ANIMATOR_VIEW_ERROR = R.id.view_error;
+    protected static final int ANIMATOR_VIEW_EMPTY = R.id.view_empty;
+    private List<Runnable> mDeferredUiOperations = new ArrayList<>();
     private BehaviorSubject<Observable<Article>> mItemsObservableSubject = BehaviorSubject.create();
-    private boolean                              mIsLoading              = false;
+    private boolean mIsLoading = false;
     @Nullable
-    Toolbar                                      mToolbar;
+    Toolbar mToolbar;
     @BindView(R.id.article_animator)
-    BetterViewAnimator                           mViewAnimator;
+    BetterViewAnimator mViewAnimator;
     @BindView(R.id.article_scroll_view)
-    ObservableScrollView                         mScrollView;
+    ObservableScrollView mScrollView;
     @BindView(R.id.article_illustration)
-    ImageView                                    mIllustrationImage;
+    ImageView mIllustrationImage;
     @BindView(R.id.article_illustration_container)
-    FrameLayout                                  mIllustrationContainer;
+    FrameLayout mIllustrationContainer;
     @BindView(R.id.multi_swipe_refresh_layout)
-    MultiSwipeRefreshLayout                      mSwipeRefreshLayout;
+    MultiSwipeRefreshLayout mSwipeRefreshLayout;
     @BindView(R.id.article_title)
-    TextView                                     mTitle;
+    TextView mTitle;
     @BindView(R.id.article_date)
-    TextView                                     mDate;
+    TextView mDate;
     @BindView(R.id.article_overview)
-    TextView                                     mDescription;
+    TextView mDescription;
     @BindColor(R.color.theme_primary)
-    int                                          mColorThemePrimary;
+    int mColorThemePrimary;
     @BindColor(R.color.body_text_white)
-    int                                          mColorTextWhite;
+    int mColorTextWhite;
     @Inject
-    protected ArticleRepository                  mArticleRepository;
-    private CompositeSubscription                mSubscriptions;
-    private Article                              mArticle;
-    private MenuItem                             mMenuItemShare;
+    protected ArticleRepository mArticleRepository;
+    private CompositeSubscription mSubscriptions;
+    private Article mArticle;
+    private MenuItem mMenuItemShare;
 
     @Override
     public boolean canSwipeRefreshChildScrollUp() {
         return ((mScrollView != null) && ViewCompat.canScrollVertically(mScrollView, -1))
-               || ((mViewAnimator != null) && (mViewAnimator.getDisplayedChildId() == ANIMATOR_VIEW_LOADING));
+                || ((mViewAnimator != null) && (mViewAnimator.getDisplayedChildId() == ANIMATOR_VIEW_LOADING));
     }
 
     private void initSwipeRefreshLayout() {
@@ -195,20 +198,21 @@ public final class ArticleDetailsFragment extends BaseFragment
         mDescription.setText(Html.fromHtml(article.getDescription()).toString());
 
         if (null != article.getUrlToImage()) {
-
             // Illustration image
             Glide.with(this)
-                 .load(article.getUrlToImage())
-                 .placeholder(R.color.article_illustration_placeholder)
-                 .centerCrop()
-                 .crossFade()
-                 .into(mIllustrationImage);
+                    .load(article.getUrlToImage())
+                    .apply(RequestOptions.centerCropTransform()
+                            .placeholder(R.color.article_illustration_placeholder)
+                            .priority(Priority.HIGH))
+                    .transition(DrawableTransitionOptions.withCrossFade(300))
+                    .into(mIllustrationImage);
         }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menu_share) {}
+        if (item.getItemId() == R.id.menu_share) {
+        }
 
         return true;
     }
@@ -230,8 +234,8 @@ public final class ArticleDetailsFragment extends BaseFragment
         ViewCompat.setTranslationY(mIllustrationContainer, scrollY / 2);
 
         if (mToolbar != null) {
-            int   parallaxImageHeight = mIllustrationContainer.getMeasuredHeight();
-            float alpha               = Math.min(1, (float) scrollY / parallaxImageHeight);
+            int parallaxImageHeight = mIllustrationContainer.getMeasuredHeight();
+            float alpha = Math.min(1, (float) scrollY / parallaxImageHeight);
 
             mToolbar.setBackgroundColor(ScrollUtils.getColorWithAlpha(alpha, mColorThemePrimary));
             mToolbar.setTitleTextColor(ScrollUtils.getColorWithAlpha(alpha, mColorTextWhite));
@@ -254,12 +258,10 @@ public final class ArticleDetailsFragment extends BaseFragment
             Timber.d(String.format("Restoring state: pages was loading - %s", mIsLoading));
             mScrollView.onRestoreInstanceState(savedInstanceState.getParcelable(Constants.Intent.SCROLL_VIEW));
             mIsLoading = savedInstanceState.getBoolean(Constants.Intent.IS_LOADING, true);
-            mArticle      = savedInstanceState.getParcelable(Constants.Extra.ARTICLE_ITEM);
+            mArticle = savedInstanceState.getParcelable(Constants.Extra.ARTICLE_ITEM);
         }
 
-        mViewAnimator.setDisplayedChildId((mIsLoading)
-                                          ? ANIMATOR_VIEW_LOADING
-                                          : ANIMATOR_VIEW_CONTENT);
+        mViewAnimator.setDisplayedChildId((mIsLoading) ? ANIMATOR_VIEW_LOADING : ANIMATOR_VIEW_CONTENT);
         initSwipeRefreshLayout();
     }
 
@@ -274,11 +276,11 @@ public final class ArticleDetailsFragment extends BaseFragment
     private void subscribeToNews() {
         Timber.d("Subscribing to items");
         mSubscriptions.add(Observable.concat(mItemsObservableSubject).observeOn(AndroidSchedulers.mainThread()).subscribe(article -> {
-                mSwipeRefreshLayout.setRefreshing(false);
-                Timber.d(String.format("Article %d is loaded", article.getId()));
-                mViewAnimator.setDisplayedChildId(ANIMATOR_VIEW_CONTENT);
-                onNewsLoaded(article);
-            },
+                    mSwipeRefreshLayout.setRefreshing(false);
+                    Timber.d(String.format("Article %d is loaded", article.getId()));
+                    mViewAnimator.setDisplayedChildId(ANIMATOR_VIEW_CONTENT);
+                    onNewsLoaded(article);
+                },
                 throwable -> {
                     Timber.e(throwable, "Article loading failed.");
 
