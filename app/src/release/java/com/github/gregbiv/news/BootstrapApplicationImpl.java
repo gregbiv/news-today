@@ -14,6 +14,9 @@ import com.github.gregbiv.news.logging.CrashlyticsTree;
 
 import io.fabric.sdk.android.Fabric;
 
+import com.squareup.leakcanary.LeakCanary;
+import com.squareup.leakcanary.RefWatcher;
+
 import timber.log.Timber;
 
 public class BootstrapApplicationImpl extends BootstrapApplication {
@@ -27,7 +30,10 @@ public class BootstrapApplicationImpl extends BootstrapApplication {
         Timber.plant(new CrashlyticsTree());
     }
 
+    protected RefWatcher installLeakCanary() {
+        return LeakCanary.install(this);
+    }
+
     @Override
     protected void onAfterInjection() {}
 }
-
