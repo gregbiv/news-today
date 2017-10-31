@@ -2,7 +2,7 @@
 
     <!-- Common -->
     <style name="CollectionView">
-        <item name="android:padding">@dimen/item_spacing_half</item>
+        <!--<item name="android:padding">@dimen/item_spacing_half</item>-->
         <item name="android:clipToPadding">false</item>
         <item name="android:scrollbars">none</item>
     </style>
