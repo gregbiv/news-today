@@ -1,8 +1,8 @@
 buildscript {
     repositories {
         jcenter()
+        google()
         maven { url 'https://maven.fabric.io/public' }
-        mavenLocal()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.0'
@@ -18,7 +18,6 @@ repositories {
     mavenLocal()
     jcenter()
     maven { url 'https://maven.fabric.io/public' }
-    google()
 }
 
 android {
@@ -43,6 +42,11 @@ android {
         // Error: Duplicate files during packaging of APK
         exclude 'META-INF/services/javax.annotation.processing.Processor'
         exclude 'LICENSE.txt'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     signingConfigs {
@@ -84,10 +88,6 @@ android {
             // testPackageName 'com.github.gregbiv.news.app.tests'
             // testInstrumentationRunner 'android.test.InstrumentationTestRunner' // this is the default
         }
-        compileOptions {
-            sourceCompatibility JavaVersion.VERSION_1_8
-            targetCompatibility JavaVersion.VERSION_1_8
-        }
     }
 
     sourceSets {
@@ -127,8 +127,8 @@ dependencies {
     implementation 'io.reactivex:rxjava:1.2.3'
     implementation 'io.reactivex:rxandroid:1.2.1'
     // LeakCanary
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.4'
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
     // Event Bus
     implementation 'com.squareup:otto:1.3.8'
     // HTTP
@@ -157,6 +157,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test.uiautomator:uiautomator-v18:2.1.3'
     androidTestImplementation 'org.hamcrest:hamcrest-library:1.3'
     androidTestImplementation 'org.mockito:mockito-core:2.11.0'
+    androidTestImplementation "com.squareup.leakcanary:leakcanary-android-no-op:1.5.4"
     compileOnly 'javax.annotation:jsr250-api:1.0'
 }
 

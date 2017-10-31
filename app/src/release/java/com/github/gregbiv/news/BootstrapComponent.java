@@ -10,9 +10,12 @@ package com.github.gregbiv.news;
 
 import javax.inject.Singleton;
 
-import com.github.gregbiv.news.ui.activity.BootstrapActivity;
-import com.github.gregbiv.news.ui.activity.MainActivity;
-import com.github.gregbiv.news.ui.fragment.NewsFragment;
+import com.github.gregbiv.news.core.sync.NewsSyncAdapter;
+import com.github.gregbiv.news.ui.activity.BaseActivity;
+import com.github.gregbiv.news.ui.activity.BrowseArticlesActivity;
+import com.github.gregbiv.news.ui.fragment.ArticleDetailsFragment;
+import com.github.gregbiv.news.ui.fragment.BrowseArticlesFragment;
+import com.github.gregbiv.news.ui.fragment.ArticleFragment;
 
 import dagger.Component;
 
@@ -23,15 +26,13 @@ public interface BootstrapComponent {
 
     void inject(BootstrapApplication target);
 
-    void inject(BrowseNewsActivity target);
+    void inject(BrowseArticlesActivity target);
 
-    void inject(NewsFragment target);
+    void inject(BrowseArticlesFragment target);
 
-    void inject(BrowseNewsFragment target);
+    void inject(ArticleDetailsFragment target);
 
-    void inject(NewsDetailsFragment target);
-
-    void inject(BaseActivity target);
+    void inject(ArticleFragment target);
 
     void inject(NewsSyncAdapter target);
 }
